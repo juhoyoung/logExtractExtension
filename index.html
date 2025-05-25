@@ -3,21 +3,108 @@
 <head>
   <meta charset="UTF-8" />
   <style>
-    body { font-family: sans-serif; padding: 20px; background: #f9f9f9; }
-    input[type="text"] { padding: 6px; width: 200px; }
-    button { padding: 6px 10px; margin-left: 5px; }
-    ul { list-style: none; padding-left: 0; }
-    li { margin: 8px 0; }
+    body { 
+      font-family: sans-serif; 
+      padding: 20px; 
+      background: #f9f9f9; 
+    }
+    
+    .input-container {
+      margin-bottom: 20px;
+    }
+    
+    input[type="text"] { 
+      padding: 8px; 
+      width: 180px; 
+      margin-right: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    
+    button { 
+      padding: 8px 12px; 
+      background-color: #007cba;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    button:hover {
+      background-color: #005a87;
+    }
+    
+    button[data-remove] {
+      background-color: #dc3545;
+      padding: 4px 8px;
+      font-size: 12px;
+      margin-left: 10px;
+    }
+    
+    button[data-remove]:hover {
+      background-color: #c82333;
+    }
+    
+    ul { 
+      list-style: none; 
+      padding-left: 0; 
+      margin-top: 20px;
+    }
+    
+    li { 
+      margin: 12px 0; 
+      padding: 10px;
+      background: white;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    
+    li input[type="checkbox"] {
+      margin-right: 10px;
+      transform: scale(1.2);
+    }
+    
+    li strong {
+      color: #333;
+      margin-right: 10px;
+    }
+    
+    .skill-details {
+      color: #666;
+      font-size: 12px;
+      margin-left: 10px;
+      margin-right: 10px;
+    }
+    
+    .skill-id {
+      color: #666;
+      font-size: 14px;
+      margin-right: 10px;
+    }
+    
+    h2 {
+      color: #333;
+      margin-bottom: 20px;
+    }
   </style>
 </head>
 <body>
   <h2>🎯 추적할 스킬 관리</h2>
-  <input type="text" id="skillName" placeholder="Skill Name (ex: firebreath)" />
-  <input type="text" id="spellId" placeholder="Spell ID (ex: 357208)" />
-  <button id="addSkill">추가</button>
+  
+  <div class="input-container">
+    <input type="text" id="displayName" placeholder="Display Name (ex: Fire Breath)" />
+    <input type="text" id="spellId" placeholder="Spell ID (ex: 357208)" />
+    <input type="text" id="englishName" placeholder="English Name (ex: firebreath)" />
+    <input type="text" id="koreanName" placeholder="Korean Name (ex: 불의숨결)" />
+    <button id="addSkill">추가</button>
+  </div>
+  
   <ul id="skillList"></ul>
 
-  <!-- 외부 스크립트 사용 -->
   <script src="index.js"></script>
 </body>
 </html>

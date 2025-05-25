@@ -3,10 +3,10 @@ document.addEventListener('DOMContentLoaded', function () {
   const addSkillBtn = document.getElementById('addSkill');
 
   const defaultSkills = {
-    firebreath: { id: '357208', enabled: true },
-    eternitysurge: { id: '359073', enabled: true },
-    engulf: { id: '443328', enabled: true },
-    dragonrage: { id: '375087', enabled: true }
+    "357208": { display: "Fire Breath", en: "firebreath", ko: "불의숨결", enabled: true },
+    "359073": { display: "Eternity Surge", en: "eternitysurge", ko: "영원의쇄도", enabled: true },
+    "443328": { display: "Engulf", en: "engulf", ko: "업화", enabled: true },
+    "375087": { display: "Dragonrage", en: "dragonrage", ko: "용의분노", enabled: true }
   };
 
   function initializeDefaultSkills(skills) {
@@ -23,12 +23,14 @@ document.addEventListener('DOMContentLoaded', function () {
       if (initializeDefaultSkills(skills)) return;
 
       skillListElement.innerHTML = '';
-      for (const [name, value] of Object.entries(skills)) {
+      for (const [id, value] of Object.entries(skills)) {
         const li = document.createElement('li');
         li.innerHTML = `
-          <input type="checkbox" ${value.enabled ? 'checked' : ''} data-name="${name}" />
-          <strong>${name}</strong> (ID: ${value.id})
-          <button data-remove="${name}">삭제</button>
+          <input type="checkbox" ${value.enabled ? 'checked' : ''} data-id="${id}" />
+          <strong>${value.display}</strong> 
+          <span class="skill-id">(ID: ${id})</span>
+          <span class="skill-details">en: ${value.en || 'N/A'} | ko: ${value.ko || 'N/A'}</span>
+          <button data-remove="${id}">삭제</button>
         `;
         skillListElement.appendChild(li);
       }
@@ -36,21 +38,21 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   skillListElement.addEventListener('click', (e) => {
-    const removeName = e.target.dataset.remove;
-    if (removeName) {
+    const removeId = e.target.dataset.remove;
+    if (removeId) {
       chrome.storage.local.get('trackedSkills', (data) => {
         const skills = data.trackedSkills || {};
-        delete skills[removeName];
+        delete skills[removeId];
         chrome.storage.local.set({ trackedSkills: skills }, loadSkills);
       });
     }
 
     if (e.target.type === 'checkbox') {
-      const name = e.target.dataset.name;
+      const id = e.target.dataset.id;
       chrome.storage.local.get('trackedSkills', (data) => {
         const skills = data.trackedSkills || {};
-        if (skills[name]) {
-          skills[name].enabled = e.target.checked;
+        if (skills[id]) {
+          skills[id].enabled = e.target.checked;
           chrome.storage.local.set({ trackedSkills: skills });
         }
       });
@@ -58,16 +60,41 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   addSkillBtn.addEventListener('click', () => {
-    const name = document.getElementById('skillName').value.trim().toLowerCase();
     const id = document.getElementById('spellId').value.trim();
-    if (!name || !id) return;
+    let displayName = document.getElementById('displayName').value.trim();
+    const en = document.getElementById('englishName').value.replace(/\s/g, '').trim().toLowerCase();
+    const ko = document.getElementById('koreanName').value.replace(/\s/g, '').trim();
+
+    // Check if ID is provided
+    if (!id) {
+      alert('Spell ID는 필수입니다.');
+      return;
+    }
+
+    // Check if at least one of EN or KO is provided
+    if (!en && !ko) {
+      alert('영문명 또는 한글명 중 하나는 반드시 입력해야 합니다.');
+      return;
+    }
+
+    // Auto-fill displayName if not provided
+    if (!displayName) {
+      displayName = en || ko;
+    }
 
     chrome.storage.local.get('trackedSkills', (data) => {
       const skills = data.trackedSkills || {};
-      skills[name] = { id, enabled: true };
+      skills[id] = { 
+        display: displayName, 
+        en: en || '', 
+        ko: ko || '', 
+        enabled: true 
+      };
       chrome.storage.local.set({ trackedSkills: skills }, () => {
-        document.getElementById('skillName').value = '';
+        document.getElementById('displayName').value = '';
         document.getElementById('spellId').value = '';
+        document.getElementById('englishName').value = '';
+        document.getElementById('koreanName').value = '';
         loadSkills();
       });
     });

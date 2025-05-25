@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	let currentResults = [];
 
-	// 현재 탭이 Warcraft Logs인지 확인
 	chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
 		const currentTab = tabs[0];
 		if (currentTab.url.includes('warcraftlogs.com')) {
@@ -30,19 +29,24 @@ document.addEventListener('DOMContentLoaded', function () {
 		trackBtn.textContent = '분석 중...';
 		status.textContent = '🔄 로그 분석 중...';
 		status.className = 'status loading';
-
+		
 		chrome.storage.local.get('trackedSkills', function (data) {
 			const rawSkills = data.trackedSkills || {};
 			const trackedSkills = Object.entries(rawSkills)
 				.filter(([_, value]) => value.enabled)
-				.map(([name, value]) => [name, value.id]);
+				.map(([id, value]) => ({
+					id,
+					display: value.display,
+					en: value.en.toLowerCase(),
+					ko: value.ko
+				}));
+
+			console.log('[popup.js] 추적 스킬 목록:', trackedSkills);
 
 			chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
 				chrome.scripting.executeScript({
 					target: { tabId: tabs[0].id },
-					func: async function (playerName, trackedSkillsArray) {
-						const trackedSkills = new Map(trackedSkillsArray);
-
+					func: async function (playerName, trackedSkills) {
 						function toMinuteSeconds(rawTime) {
 							const parts = rawTime.split(':');
 							const minutes = String(parseInt(parts[0])).padStart(2, '0');
@@ -50,7 +54,6 @@ document.addEventListener('DOMContentLoaded', function () {
 							return minutes + ':' + String(seconds).padStart(2, '0');
 						}
 
-						const seenTimes = new Set();
 						const entries = [];
 
 						try {
@@ -61,15 +64,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
 						await new Promise(resolve => setTimeout(resolve, 2000));
 						let rows = document.querySelectorAll('tr[id^="event-row"]');
-						if (rows.length === 0) {
-							rows = document.querySelectorAll('tr[class*="event"]');
-						}
-						if (rows.length === 0) {
-							rows = document.querySelectorAll('table tr');
-						}
-						if (rows.length === 0) {
-							return [];
-						}
+						if (rows.length === 0) rows = document.querySelectorAll('tr[class*="event"]');
+						if (rows.length === 0) rows = document.querySelectorAll('table tr');
+						if (rows.length === 0) return [];
 
 						let tipTheScalesActive = false;
 
@@ -88,12 +85,19 @@ document.addEventListener('DOMContentLoaded', function () {
 								continue;
 							}
 
-							for (const [skillName, spellId] of trackedSkills) {
-								if (cleanText.includes('casts' + skillName)) {
+							for (const skill of trackedSkills) {
+								if (
+									cleanText.includes('casts' + skill.en) ||
+									cleanText.includes('casts' + skill.ko)
+								) {
 									let result;
-									if (tipTheScalesActive &&
-										(skillName === 'firebreath' || skillName === 'eternitysurge')) {
-										result = `{time:${time}} - ${playerName} {spell:${spellId}} - tip the scales`;
+									const tipMatch = (
+										skill.en === 'firebreath' || skill.en === 'eternitysurge' ||
+										skill.ko === '불의숨결' || skill.ko === '영원의쇄도'
+									);
+
+									if (tipTheScalesActive && tipMatch) {
+										result = `{time:${time}} - ${playerName} {spell:${skill.id}} - tip the scales`;
 										tipTheScalesActive = false;
 									} else {
 										let level = 'N/A';
@@ -101,16 +105,20 @@ document.addEventListener('DOMContentLoaded', function () {
 											const nextEvent = rows[j].querySelector('.event-description-cell');
 											if (!nextEvent) continue;
 											const nextText = nextEvent.textContent.replace(/\s+/g, '').toLowerCase();
-											if (nextText.includes('releases' + skillName + 'atempowermentlevel')) {
-												const levelMatch = nextText.match(/level(\d+)/);
-												if (levelMatch) level = levelMatch[1];
+											if (
+												nextText.includes('releases' + skill.en + 'atempowermentlevel') ||
+												nextText.includes('releases' + skill.ko + 'atempowermentlevel')
+											) {
+												const match = nextText.match(/level(\d+)/);
+												if (match) level = match[1];
 												break;
 											}
 										}
 										result = level === 'N/A'
-											? `{time:${time}} - ${playerName} {spell:${spellId}}`
-											: `{time:${time}} - ${playerName} {spell:${spellId}} - level ${level}`;
+											? `{time:${time}} - ${playerName} {spell:${skill.id}}`
+											: `{time:${time}} - ${playerName} {spell:${skill.id}} - level ${level}`;
 									}
+
 									entries.push(result);
 									break;
 								}
