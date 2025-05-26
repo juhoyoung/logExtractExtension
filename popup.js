@@ -10,6 +10,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	let currentResults = [];
 
+	// 페이지 로드 시 저장된 플레이어 이름 불러오기
+	chrome.storage.local.get('playerName', function (data) {
+		if (data.playerName) {
+			playerNameInput.value = data.playerName;
+		}
+	});
+
+	// 플레이어 이름 입력 시 자동 저장
+	playerNameInput.addEventListener('input', function () {
+		const playerName = playerNameInput.value.trim();
+		chrome.storage.local.set({ playerName: playerName });
+	});
+
+	// 포커스 아웃 시에도 저장 (안전장치)
+	playerNameInput.addEventListener('blur', function () {
+		const playerName = playerNameInput.value.trim();
+		chrome.storage.local.set({ playerName: playerName });
+	});
+
 	chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
 		const currentTab = tabs[0];
 		if (currentTab.url.includes('warcraftlogs.com')) {
@@ -25,6 +44,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	trackBtn.addEventListener('click', function () {
 		const playerName = playerNameInput.value.trim() || '';
+		
+		// 플레이어 이름을 다시 한번 저장 (버튼 클릭 시)
+		chrome.storage.local.set({ playerName: playerName });
+		
 		trackBtn.disabled = true;
 		trackBtn.textContent = '분석 중...';
 		status.textContent = '🔄 로그 분석 중...';
@@ -86,14 +109,16 @@ document.addEventListener('DOMContentLoaded', function () {
 							}
 
 							for (const skill of trackedSkills) {
+								let Skill_En = skill.en.replace(/\s+/g, '').toLowerCase().trim();
+								let Skill_Ko = skill.ko.replace(/\s+/g, '').trim();
 								if (
-									cleanText.includes('casts' + skill.en) ||
+									cleanText.includes('casts' + Skill_En) ||
 									cleanText.includes('casts' + skill.ko)
 								) {
 									let result;
 									const tipMatch = (
-										skill.en === 'firebreath' || skill.en === 'eternitysurge' ||
-										skill.ko === '불의숨결' || skill.ko === '영원의쇄도'
+										Skill_En === 'firebreath' || Skill_En === 'eternitysurge' ||
+										Skill_Ko === '불의숨결' || Skill_Ko === '영원의쇄도'
 									);
 
 									if (tipTheScalesActive && tipMatch) {
@@ -106,8 +131,8 @@ document.addEventListener('DOMContentLoaded', function () {
 											if (!nextEvent) continue;
 											const nextText = nextEvent.textContent.replace(/\s+/g, '').toLowerCase();
 											if (
-												nextText.includes('releases' + skill.en + 'atempowermentlevel') ||
-												nextText.includes('releases' + skill.ko + 'atempowermentlevel')
+												nextText.includes('releases' + Skill_En + 'atempowermentlevel') ||
+												nextText.includes('releases' + Skill_Ko + 'atempowermentlevel')
 											) {
 												const match = nextText.match(/level(\d+)/);
 												if (match) level = match[1];
@@ -128,6 +153,7 @@ document.addEventListener('DOMContentLoaded', function () {
 					},
 					args: [playerName, trackedSkills]
 				}).then(function (results) {
+					console.log(results);
 					trackBtn.disabled = false;
 					trackBtn.textContent = '스킬 추적';
 
