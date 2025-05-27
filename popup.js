@@ -53,8 +53,10 @@ document.addEventListener('DOMContentLoaded', function () {
 		status.textContent = '🔄 로그 분석 중...';
 		status.className = 'status loading';
 		
-		chrome.storage.local.get('trackedSkills', function (data) {
+		chrome.storage.local.get(['trackedSkills', 'exportOptions'], function (data) {
 			const rawSkills = data.trackedSkills || {};
+			const opts = data.exportOptions || {};
+
 			const trackedSkills = Object.entries(rawSkills)
 				.filter(([_, value]) => value.enabled)
 				.map(([id, value]) => ({
@@ -63,13 +65,19 @@ document.addEventListener('DOMContentLoaded', function () {
 					en: value.en.toLowerCase(),
 					ko: value.ko
 				}));
+			const trackingOpts = {
+				options: {
+					tipTheScales: opts.tipTheScales || false,
+					includeRank: opts.includeRank || false,
+					appendDisplay: opts.appendDisplay || false
+				}
+			};
 
-			console.log('[popup.js] 추적 스킬 목록:', trackedSkills);
 
 			chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
 				chrome.scripting.executeScript({
 					target: { tabId: tabs[0].id },
-					func: async function (playerName, trackedSkills) {
+					func: async function (playerName, trackedSkills, trackingOpts) {
 						function toMinuteSeconds(rawTime) {
 							const parts = rawTime.split(':');
 							const minutes = String(parseInt(parts[0])).padStart(2, '0');
@@ -109,6 +117,7 @@ document.addEventListener('DOMContentLoaded', function () {
 							}
 
 							for (const skill of trackedSkills) {
+								console.log(skill);
 								let Skill_En = skill.en.replace(/\s+/g, '').toLowerCase().trim();
 								let Skill_Ko = skill.ko.replace(/\s+/g, '').trim();
 								if (
@@ -121,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function () {
 										Skill_Ko === '불의숨결' || Skill_Ko === '영원의쇄도'
 									);
 
-									if (tipTheScalesActive && tipMatch) {
+									if (tipTheScalesActive && tipMatch && trackingOpts.options.tipTheScales) {
 										result = `{time:${time}} - ${playerName} {spell:${skill.id}} - tip the scales`;
 										tipTheScalesActive = false;
 									} else {
@@ -139,9 +148,13 @@ document.addEventListener('DOMContentLoaded', function () {
 												break;
 											}
 										}
-										result = level === 'N/A'
+										result = level === 'N/A'||!trackingOpts.options.includeRank
 											? `{time:${time}} - ${playerName} {spell:${skill.id}}`
 											: `{time:${time}} - ${playerName} {spell:${skill.id}} - level ${level}`;
+
+										result = trackingOpts.options.appendDisplay
+										? result.concat(` - ${skill.display}`)
+										: result;
 									}
 
 									entries.push(result);
@@ -151,7 +164,7 @@ document.addEventListener('DOMContentLoaded', function () {
 						}
 						return entries;
 					},
-					args: [playerName, trackedSkills]
+					args: [playerName, trackedSkills, trackingOpts]
 				}).then(function (results) {
 					console.log(results);
 					trackBtn.disabled = false;

@@ -2,10 +2,10 @@
 <html>
 <head>
     <meta charset="UTF-8"/>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="index.css"/>
 </head>
 <body>
-<h2>🎯 추적할 스킬 관리</h2>
+<h2>🎯 스킬 관리</h2>
 
 <div class="input-container">
     <div id="editingIndicator" class="editing-indicator" style="display: none;">
@@ -36,11 +36,78 @@
         <button id="addSkill">추가</button>
         <button id="cancelEdit" class="cancel-edit" style="display: none;">수정 취소</button>
     </div>
-    <div class="input-row">
+    <div style="margin-bottom: 10px;">
+        <label for="exportClassSelect">📌 추출할 직업 선택: </label>
+        <select id="exportClassSelect">
+            <option value="">전체</option>
+            <option value="WARRIOR">전사</option>
+            <option value="PALADIN">성기사</option>
+            <option value="DK">죽음의 기사</option>
+            <option value="MONK">수도사</option>
+            <option value="DH">악마사냥꾼</option>
+            <option value="DRUID">드루이드</option>
+            <option value="ROGUE">도적</option>
+            <option value="HUNTER">사냥꾼</option>
+            <option value="MAGE">마법사</option>
+            <option value="WARLOCK">흑마법사</option>
+            <option value="PRIEST">사제</option>
+            <option value="SHAMAN">주술사</option>
+            <option value="EVOKER">기원사</option>
+        </select>
+        <button id="showExport">📤 목록 추출</button>
+        <button id="showImport">📥 목록 입력</button>
+    </div>
 
+    <div id="skillJsonContainer" style="display: none;">
+        <textarea id="skillTextArea" rows="8" style="width: 100%;" placeholder=""></textarea>
+        <div style="margin-top: 10px;">
+            <button id="executeSkillJsonAction">실행</button>
+        </div>
+    </div>
+
+
+</div>
+<div class="class-section">
+    <div class="class-header" data-class="OPTIONS">
+        <div>
+            <span class="class-title">추출 옵션</span>
+        </div>
+        <span class="class-toggle">▶</span>
+    </div>
+
+    <div class="skills-container collapsed" data-skills="OPTIONS">
+        <div class="skill-opt-item">
+            <div class="skill-opt-col-check">
+                <input type="checkbox" id="optionTipTheScales"/>
+            </div>
+            <div class="skill-col">
+                <label for="optionTipTheScales">
+                    <strong>추출 결과에 전세역전 포함 (기원사)</strong>
+                </label>
+            </div>
+        </div>
+        <div class="skill-opt-item">
+            <div class="skill-opt-col-check">
+                <input type="checkbox" id="optionIncludeRank"/>
+            </div>
+            <div class="skill-col">
+                <label for="optionIncludeRank">
+                    <strong>추출 결과에 스킬 강화 단계 포함 (기원사)</strong>
+                </label>
+            </div>
+        </div>
+        <div class="skill-opt-item">
+            <div class="skill-opt-col-check">
+                <input type="checkbox" id="optionAppendDisplay"/>
+            </div>
+            <div class="skill-col">
+                <label for="optionAppendDisplay">
+                    <strong>추출 결과에 DisplayName 추가</strong>
+                </label>
+            </div>
+        </div>
     </div>
 </div>
-
 <div id="skillsByClass"></div>
 
 <script type="module" src="index.js"></script>

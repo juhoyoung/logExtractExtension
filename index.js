@@ -1,5 +1,5 @@
-import { classInfo } from './classInfo.js';
-import { defaultSkills } from './defaultSkills.js';
+import {classInfo} from './classInfo.js';
+import {defaultSkills} from './defaultSkills.js';
 
 document.addEventListener('DOMContentLoaded', function () {
     const skillsByClassElement = document.getElementById('skillsByClass');
@@ -7,10 +7,22 @@ document.addEventListener('DOMContentLoaded', function () {
     const cancelEditBtn = document.getElementById('cancelEdit');
     const editingIndicator = document.getElementById('editingIndicator');
     const editingSkillName = document.getElementById('editingSkillName');
+    const skillTextArea = document.getElementById('skillTextArea');
+    const showExportBtn = document.getElementById('showExport');
+    const showImportBtn = document.getElementById('showImport');
+    const executeBtn = document.getElementById('executeSkillJsonAction');
+    const skillJsonContainer = document.getElementById('skillJsonContainer');
+    const tipCheckbox = document.getElementById('optionTipTheScales');
+    const rankCheckbox = document.getElementById('optionIncludeRank');
+    const displayCheckbox = document.getElementById('optionAppendDisplay');
+
+    let currentMode = null; // 'export' or 'import'
 
     let isEditing = false;
     let editingSkillId = null;
 
+    // 지원 직업 코드 목록 추출
+    const exportClassSelect = document.getElementById('exportClassSelect');
 
     function initializeDefaultSkills(skills) {
         if (Object.keys(skills).length === 0) {
@@ -118,24 +130,27 @@ document.addEventListener('DOMContentLoaded', function () {
                     </div>
                     <span class="class-toggle">▼</span>
                 </div>
-                <div class="skill-header">
-                    <div class="skill-col">
-                        <button class="toggle-all" data-toggle-all="${className}">전체</button>
-                    </div>
-                    <div class="skill-col">이름</div>
-                    <div class="skill-col">ID</div>
-                    <div class="skill-col">영어명</div>
-                    <div class="skill-col">한글명</div>
-                    <div class="actions-col">작업</div>
-                </div>
+                
                 <div class="skills-container" data-skills="${className}">
+                    <div class="skill-header">
+                        <div class="skill-col-check">
+                            <button class="toggle-all" data-toggle-all="${className}">전체</button>
+                        </div>
+                        <div class="skill-col">이름</div>
+                        <div class="skill-col">ID</div>
+                        <div class="skill-col">영어명</div>
+                        <div class="skill-col">한글명</div>
+                        <div class="actions-col">작업</div>
+                    </div>
                     ${classSkills.map(skill => `
                     <div class="skill-item ${isEditing && editingSkillId === skill.id ? 'editing' : ''}">
-                        <div class="skill-col">
-                            <input type="checkbox" ${skill.enabled ? 'checked' : ''} data-id="${skill.id}" />
+                        <div class="skill-col-check">
+                            <input type="checkbox" ${skill.enabled ? 'checked' : ''} data-id="${skill.id}" id="c${skill.id}"/>
                         </div>
                         <div class="skill-col">
-                            <strong data-label-for="${skill.id}">${skill.display}</strong>
+                            <label for="c${skill.id}">
+                                <strong data-label-for="${skill.id}">${skill.display}</strong>
+                            </label>
                         </div>
                         <div class="skill-col">
                             <span class="skill-id">ID: ${skill.id}</span>
@@ -229,7 +244,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const checkboxes = container.querySelectorAll('input[type="checkbox"]');
             const allChecked = [...checkboxes].every(cb => cb.checked);
 
-            // 스토리지에서 현재 저장된 스킬 목록을 한 번만 가져옵니다.
             chrome.storage.local.get('trackedSkills', (data) => {
                 const skills = data.trackedSkills || {};
 
@@ -237,10 +251,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     cb.checked = !allChecked;
                     const id = cb.dataset.id;
                     if (skills[id]) {
-                        skills[id].enabled = !allChecked; // 가져온 스킬 객체를 업데이트합니다.
+                        skills[id].enabled = !allChecked;
                     }
                 });
-                // 모든 변경 사항을 한 번에 스토리지에 저장합니다.
                 chrome.storage.local.set({trackedSkills: skills});
             });
         }
@@ -262,6 +275,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (!id) {
             alert('Spell ID는 필수입니다.');
+            return;
+        }
+
+        if (!/^\d+$/.test(id)) {
+            alert(`스펠 ID는 숫자만 입력 가능합니다.`);
             return;
         }
 
@@ -309,9 +327,184 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+// textarea 열기 및 모드 설정
+    function openSkillJsonArea(mode) {
+        currentMode = mode;
+        skillJsonContainer.style.display = 'block';
+        skillTextArea.value = '';
+
+        if (mode === 'export') {
+            skillTextArea.placeholder = '📤 현재 저장된 스킬 목록이 여기에 표시됩니다.';
+            chrome.storage.local.get('trackedSkills', (data) => {
+                const skills = data.trackedSkills || {};
+                const selectedClass = exportClassSelect.value;
+
+                const filteredSkills = {};
+                for (const [id, skill] of Object.entries(skills)) {
+                    if (!selectedClass || skill.class === selectedClass) {
+                        filteredSkills[id] = skill;
+                    }
+                }
+
+                const skillJson = JSON.stringify(filteredSkills, null, 2);
+                skillTextArea.value = skillJson;
+
+                navigator.clipboard.writeText(skillJson)
+                    .then(() => {
+                        alert('📋 스킬 목록이 클립보드에 복사되었습니다.');
+                        //console.debug('클립보드에 복사 완료');
+                    })
+                    .catch(err => {
+                        console.error('클립보드 복사 실패:', err);
+                    });
+            });
+        } else if (mode === 'import') {
+            skillTextArea.placeholder = '📥 추출된 스킬 목록을 여기에 붙여 넣으세요.';
+        }
+    }
+
+    // 버튼 이벤트 연결
+    showExportBtn.addEventListener('click', () => openSkillJsonArea('export'));
+    showImportBtn.addEventListener('click', () => openSkillJsonArea('import'));
+
+    // 실행 버튼 동작
+    executeBtn.addEventListener('click', () => {
+        if (currentMode === 'export') {
+            chrome.storage.local.get('trackedSkills', (data) => {
+                const skills = data.trackedSkills || {};
+                const selectedClass = exportClassSelect.value;
+
+                const filteredSkills = {};
+                for (const [id, skill] of Object.entries(skills)) {
+                    if (!selectedClass || skill.class === selectedClass) {
+                        filteredSkills[id] = skill;
+                    }
+                }
+
+                const skillJson = JSON.stringify(filteredSkills, null, 2);
+                skillTextArea.value = skillJson;
+
+                navigator.clipboard.writeText(skillJson)
+                    .then(() => {
+                        alert('📋 스킬 목록이 클립보드에 복사되었습니다.');
+                        //console.debug('클립보드에 복사 완료');
+                    })
+                    .catch(err => {
+                        console.error('클립보드 복사 실패:', err);
+                    });
+            });
+
+        } else if (currentMode === 'import') {
+            const input = skillTextArea.value.trim();
+            if (!input) {
+                alert('입력된 텍스트가 없습니다.');
+                return;
+            }
+
+            try {
+                const parsed = JSON.parse(input);
+                const validClasses = Object.keys(classInfo);
+
+                const cleanedSkills = {};
+
+                for (const [key, skill] of Object.entries(parsed)) {
+                    if (!/^\d+$/.test(key)) {
+                        throw new Error(`"${key}"는 숫자가 아닙니다.`);
+                    }
+                    if (
+                        typeof skill.display !== 'string' ||
+                        typeof skill.class !== 'string' ||
+                        !validClasses.includes(skill.class)
+                    ) {
+                        throw new Error(`ID("${key}") 항목의 class 값이 유효하지 않거나 필수 필드가 누락되었습니다.`);
+                    }
+
+                    // en/ko 정리
+                    const cleanedEn = skill.en?.replace(/\s/g, '').toLowerCase() || '';
+                    const cleanedKo = skill.ko?.replace(/\s/g, '') || '';
+
+                    cleanedSkills[key] = {
+                        display: skill.display,
+                        en: cleanedEn,
+                        ko: cleanedKo,
+                        enabled: skill.enabled !== false,
+                        class: skill.class
+                    };
+                }
+
+                // 기존 trackedSkills 가져와 병합 처리
+                chrome.storage.local.get('trackedSkills', (data) => {
+                    const currentSkills = data.trackedSkills || {};
+                    let hasConflict = false;
+
+                    for (const id of Object.keys(cleanedSkills)) {
+                        if (currentSkills.hasOwnProperty(id)) {
+                            hasConflict = true;
+                            break;
+                        }
+                    }
+
+                    const applyMerge = () => {
+                        const merged = {...currentSkills, ...cleanedSkills};
+                        chrome.storage.local.set({trackedSkills: merged}, () => {
+                            alert('✅ 스킬 목록이 성공적으로 추가되었습니다.');
+                            exitEditMode();
+                            loadSkills();
+                        });
+                    };
+
+                    if (hasConflict) {
+                        const confirmOverwrite = confirm('일부 ID가 이미 존재합니다. 덮어쓰시겠습니까?');
+                        if (confirmOverwrite) {
+                            applyMerge(); // 덮어쓰기 허용 → 병합
+                        } else {
+                            // 기존 ID는 유지하고 새로운 ID만 추가
+                            for (const [id, skill] of Object.entries(cleanedSkills)) {
+                                if (!currentSkills.hasOwnProperty(id)) {
+                                    currentSkills[id] = skill;
+                                }
+                            }
+                            chrome.storage.local.set({trackedSkills: currentSkills}, () => {
+                                alert('✅ 중복을 제외한 새 스킬만 추가되었습니다.');
+                                exitEditMode();
+                                loadSkills();
+                            });
+                        }
+                    } else {
+                        applyMerge(); // 중복 없음 → 병합
+                    }
+                });
+
+            } catch (e) {
+                alert(`❌ 오류: ${e.message}`);
+            }
+        }
+    });
     // 수정 취소 버튼 이벤트
     cancelEditBtn.addEventListener('click', () => {
         exitEditMode();
+    });
+
+
+    // 추출 옵션 불러오기
+    chrome.storage.local.get(['exportOptions'], (data) => {
+        const opts = data.exportOptions || {};
+        tipCheckbox.checked = opts.tipTheScales || false;
+        rankCheckbox.checked = opts.includeRank || false;
+        displayCheckbox.checked = opts.appendDisplay || false;
+    });
+
+    // 추출 옵션 변경 시 저장
+    [tipCheckbox, rankCheckbox, displayCheckbox].forEach(cb => {
+        cb.addEventListener('change', () => {
+            chrome.storage.local.set({
+                exportOptions: {
+                    tipTheScales: tipCheckbox.checked,
+                    includeRank: rankCheckbox.checked,
+                    appendDisplay: displayCheckbox.checked
+                }
+            });
+        });
     });
 
     // 초기 로드

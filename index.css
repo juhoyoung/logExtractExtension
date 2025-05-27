@@ -212,6 +212,10 @@ h2 {
     background-color: #005a87;
 }
 
+.skill-col-check{
+    flex: 0.2;
+}
+
 .skill-col {
     flex: 1;
 }
@@ -250,4 +254,16 @@ button[data-edit] {
 
 .actions-col {
     flex: 0 0 120px;
+}
+
+.skill-opt-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    background: white;
+}
+
+.skill-opt-col-check{
+    flex: 0.02;
 }
