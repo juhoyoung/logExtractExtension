@@ -153,7 +153,8 @@ document.addEventListener('DOMContentLoaded', function () {
                             </label>
                         </div>
                         <div class="skill-col">
-                            <span class="skill-id">ID: ${skill.id}</span>
+                            <!--<span class="skill-id">ID: ${skill.id}</span>-->
+                            <span class="skill-col">${skill.id}</span>
                         </div>
                         <div class="skill-col">${skill.en || 'N/A'}</div>
                         <div class="skill-col">${skill.ko || 'N/A'}</div>

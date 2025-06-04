@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function () {
 							}
 
 							for (const skill of trackedSkills) {
-								console.log(skill);
+								//console.log(skill);
 								let Skill_En = skill.en.replace(/\s+/g, '').toLowerCase().trim();
 								let Skill_Ko = skill.ko.replace(/\s+/g, '').trim();
 								if (
