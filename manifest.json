@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Warcraft Logs Skill Tracker",
   "version": "1.0",
-  "description": "Track specific skills from Warcraft Logs with empowerment levels and Tip the Scales detection",
+  "description": "",
   "permissions": [
     "activeTab",
     "scripting",

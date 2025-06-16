@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const tipCheckbox = document.getElementById('optionTipTheScales');
     const rankCheckbox = document.getElementById('optionIncludeRank');
     const displayCheckbox = document.getElementById('optionAppendDisplay');
+    const translateCheckbox = document.getElementById('optionTranslate');
 
     let currentMode = null; // 'export' or 'import'
 
@@ -493,16 +494,18 @@ document.addEventListener('DOMContentLoaded', function () {
         tipCheckbox.checked = opts.tipTheScales || false;
         rankCheckbox.checked = opts.includeRank || false;
         displayCheckbox.checked = opts.appendDisplay || false;
+        translateCheckbox.checked = opts.translatePage || false;
     });
 
     // 추출 옵션 변경 시 저장
-    [tipCheckbox, rankCheckbox, displayCheckbox].forEach(cb => {
+    [tipCheckbox, rankCheckbox, displayCheckbox, translateCheckbox].forEach(cb => {
         cb.addEventListener('change', () => {
             chrome.storage.local.set({
                 exportOptions: {
                     tipTheScales: tipCheckbox.checked,
                     includeRank: rankCheckbox.checked,
-                    appendDisplay: displayCheckbox.checked
+                    appendDisplay: displayCheckbox.checked,
+                    translatePage: translateCheckbox.checked
                 }
             });
         });

@@ -128,3 +128,28 @@ button {
     border-radius: 4px;
     font-size: 12px;
 }
+
+.btn-primary:disabled {
+    background: #94d3a2;
+    color: #e6e6e6;
+    cursor: not-allowed;
+    opacity: 0.7;
+    transform: none;
+}
+
+.btn-secondary:disabled {
+    background: #b3b7bb;
+    color: #eeeeee;
+    cursor: not-allowed;
+    opacity: 0.7;
+    transform: none;
+}
+
+.btn-info:disabled {
+    background: #88cbd6;
+    color: #e6f7fb;
+    cursor: not-allowed;
+    opacity: 0.7;
+    transform: none;
+}
+
