@@ -3,6 +3,83 @@ document.addEventListener('DOMContentLoaded', function () {
     let allLines = [];
     let userDataMap = new Map();
 
+    // 실제 시간 추출 함수 (정렬 기준 시간)
+    function extractSortTime(line) {
+        // {time:...} 패턴 찾기
+        const timeBlockMatch = line.match(/\{time:([^}]+)\}/);
+        if (!timeBlockMatch) return null;
+
+        const timeContent = timeBlockMatch[1];
+
+        // 동적 타이머 조건 확인 (SAR, SCC, SCS, SAA 등)
+        const hasDynamicCondition = /,(SAR|SCC|SCS|SAA|p):/.test(timeContent);
+
+        if (hasDynamicCondition) {
+            // 동적 타이머가 있는 경우 } 다음의 실제 시간 사용
+            const realTimeMatch = line.match(/\}(\d+:\d+)/);
+            if (realTimeMatch) {
+                return realTimeMatch[1];
+            }
+        } else {
+            // 동적 타이머가 없는 경우 time: 안의 시간 사용
+            // time:0:37 또는 time:00:27 형태에서 시간 부분만 추출
+            const timeMatch = timeContent.match(/^(\d+:\d+)/);
+            if (timeMatch) {
+                return timeMatch[1];
+            }
+        }
+
+        return null;
+    }
+
+    // 시간을 초 단위로 변환하는 함수
+    function timeToSeconds(timeStr) {
+        if (!timeStr) return 0;
+        const parts = timeStr.split(':');
+        return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+    }
+
+    // 시간순 정렬 함수
+    function sortByTime() {
+        const inputText = document.getElementById('inputText').value.trim();
+        if (!inputText) {
+            alert('정렬할 MRT 텍스트를 입력해주세요.');
+            return;
+        }
+
+        const lines = inputText.split('\n').filter(line => line.trim());
+
+        // 시간 정보가 있는 라인과 없는 라인 분리
+        const linesWithTime = [];
+        const linesWithoutTime = [];
+
+        lines.forEach(line => {
+            const sortTime = extractSortTime(line);
+            if (sortTime) {
+                linesWithTime.push({
+                    line: line,
+                    time: sortTime,
+                    seconds: timeToSeconds(sortTime)
+                });
+            } else {
+                linesWithoutTime.push(line);
+            }
+        });
+
+        // 시간순으로 정렬
+        linesWithTime.sort((a, b) => a.seconds - b.seconds);
+
+        // 정렬된 결과 합치기 (시간 있는 라인 + 시간 없는 라인)
+        const sortedLines = linesWithTime.map(item => item.line).concat(linesWithoutTime);
+
+        // 결과를 입력창에 다시 설정
+        document.getElementById('inputText').value = sortedLines.join('\n');
+
+        // 정렬 완료 알림
+        alert(`시간순 정렬 완료!\n- 시간 정보 있는 라인: ${linesWithTime.length}개\n- 시간 정보 없는 라인: ${linesWithoutTime.length}개`);
+    }
+
+
     // 단일 유저 아이디 추출 함수 (첫 번째 유저만)
     function extractUserId(line) {
         const dashIndex = line.indexOf(' - ');
@@ -246,4 +323,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     document.getElementById('extractBtn').addEventListener('click', extractSelectedUsers);
+
+    document.getElementById('sortBtn').addEventListener('click', sortByTime);
 });
