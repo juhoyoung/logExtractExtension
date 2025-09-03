@@ -24,6 +24,10 @@ function waitForPageLoad(tabId, callback) {
     }, 500);
 }
 
+
+// 저장된 스킬 목록
+let trackedSkills = [];
+
 document.addEventListener('DOMContentLoaded', function () {
     const settingsBtn = document.getElementById('settingsBtn');
     const trackBtn = document.getElementById('trackBtn');
@@ -33,8 +37,22 @@ document.addEventListener('DOMContentLoaded', function () {
     const results = document.getElementById('results');
     const resultsList = document.getElementById('resultsList');
     const playerNameInput = document.getElementById('playerName');
+    const rawTrackBtn = document.getElementById('rawTrackBtn');
 
     let currentResults = [];
+
+    chrome.storage.local.get(['trackedSkills'], function (data) {
+        const rawSkills = data.trackedSkills || {};
+        trackedSkills = Object.entries(rawSkills)
+            .filter(([_, value]) => value.enabled)
+            .map(([id, value]) => ({
+                id,
+                display: value.display,
+                en: value.en,
+                ko: value.ko,
+                extractBySpellId: value.extractBySpellId
+            }));
+    });
 
 
     // 페이지 로드 시 저장된 플레이어 이름 불러오기
@@ -69,33 +87,32 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!isReportPath) {
                 status.textContent = '❌ 잘못된 경로 입니다: 추출 하고 싶은 페이지로 이동하세요.';
                 status.style.background = 'rgba(220, 53, 69, 0.3)';
-                trackBtn.disabled = true;
+                toggleTrackBtn(false)
                 return;
             }
             if (!hasFight) {
                 status.textContent = '❌ 분석 실패: 추출 하고 싶은 전투를 선택 해주세요.';
                 status.style.background = 'rgba(220, 53, 69, 0.3)';
-                trackBtn.disabled = true;
+                toggleTrackBtn(false)
                 return;
             }
-            if (!hasSource) {
+            /*if (!hasSource) {
                 status.textContent = '❌ 분석 실패: 추출 하고 싶은 유저를 선택해주세요.';
                 status.style.background = 'rgba(220, 53, 69, 0.3)';
-                trackBtn.disabled = true;
+                toggleTrackBtn(false)
                 return;
-            }
+            }*/
 
             // exportOptions에서 translatePage 가져오기
             chrome.storage.local.get('exportOptions', function (data) {
                 const translatePage = data.exportOptions?.translatePage === true;
-
-                console.log(translatePage);
 
                 let shouldRedirect = false;
 
                 const typeParam = params.get('type');
                 const viewParam = params.get('view');
                 const hasTranslate = params.get('translate') === 'true';
+                const pinsParam = params.get('pins');
 
                 // type, view 검사
                 if (typeParam !== 'casts') {
@@ -112,206 +129,294 @@ document.addEventListener('DOMContentLoaded', function () {
                     shouldRedirect = true;
                 }
 
+
+                let currentSkillNames = new Set();
+                let trackedSkillNames = new Set();
+                let currentSkillIds = new Set();
+                let trackedSkillIds = new Set();
+                // 스킬 검사
+                if (pinsParam) {
+                    try {
+                        const decoded = decodeURIComponent(pinsParam);
+                        console.log(decoded);
+
+                        // --------------------------
+                        // ability.name IN (...)
+                        // --------------------------
+                        const nameIndex = decoded.search(/ability\.name\s+IN\s*\(/i);
+                        if (nameIndex !== -1) {
+                            // ability.id IN (...) 절이 있으면 그 앞까지만 nameSegment로 사용
+                            const idIndex = decoded.search(/ability\.id\s+IN\s*\(/i);
+                            const nameSegment = idIndex !== -1
+                                ? decoded.slice(nameIndex, idIndex)
+                                : decoded.slice(nameIndex);
+
+                            // " 로 감싸진 부분만 추출
+                            const nameMatches = [...nameSegment.matchAll(/"([^"]+)"/g)];
+                            nameMatches.forEach(m => currentSkillNames.add(m[1]));
+                        }
+
+                        // --------------------------
+                        // ability.id IN (...)
+                        // --------------------------
+                        const idInMatch = decoded.match(/ability\.id\s+IN\s*\(([^)]*)\)/i);
+                        if (idInMatch) {
+                            const idListStr = idInMatch[1]; // "123, 456, ..."
+                            const ids = (idListStr.match(/\d+/g) || []);
+                            ids.forEach(id => currentSkillIds.add(id));
+                        }
+                    } catch (e) {
+                        console.error('pins 파싱 중 오류', e);
+                    }
+                }
+
+                trackedSkills.forEach(m => {
+                    if (m.extractBySpellId) {
+                        trackedSkillIds.add(String(m.id));
+                    }else {
+                        trackedSkillNames.add(m.en);
+                        trackedSkillNames.add(m.ko);
+                    }
+                })
+
+                const trackedNamesArr = Array.from(trackedSkillNames);
+                const currentNamesArr = Array.from(currentSkillNames);
+                const trackedIdsArr   = Array.from(trackedSkillIds);
+                const currentIdsArr   = Array.from(currentSkillIds);
+
+
+                console.log(trackedNamesArr)
+                console.log(currentNamesArr)
+
+                const namesEqual = trackedNamesArr.length === currentNamesArr.length &&
+                    trackedNamesArr.every(name => currentNamesArr.includes(name));
+                const idsEqual   = trackedIdsArr.length === currentIdsArr.length &&
+                    trackedIdsArr.every(id => currentIdsArr.includes(id));
+                const isSame = namesEqual && idsEqual;
+
+                if (!isSame) {
+                    // 새로운 pins 파라미터 생성
+                    const parts = [];
+                    if (trackedSkillNames.size > 0) {
+                        const nameClause = [...trackedSkillNames]
+                            .map(name => `"${name.replace(/"/g, '\\"')}"`)
+                        .join(', ');
+                        parts.push(`ability.name IN (${nameClause})`);
+                        }
+                    if (trackedSkillIds.size > 0) {
+                        // 숫자 목록, 따옴표 없음
+                        const idClause = [...trackedSkillIds].join(', ');
+                        parts.push(`ability.id IN (${idClause})`);
+                    }
+                    const expr = parts.join(' OR ');
+                    const pinsString = `2$Off$#244F4B$expression$${expr}`;
+                    //console.log(pinsString)
+                    const encodedPins = pinsString;
+                    params.set('pins', encodedPins);
+                    shouldRedirect = true;
+                }
+
+
+
                 if (shouldRedirect) {
                     const newUrl = `${url.origin}${url.pathname}?${params.toString()}`;
                     status.textContent = '🔁 필요한 파라미터를 추가하고 다시 이동합니다...';
                     status.style.background = 'rgba(255, 193, 7, 0.3)';
-                    trackBtn.disabled = true;
+                    toggleTrackBtn(false);
+
 
                     chrome.tabs.update(currentTab.id, { url: newUrl }, function (updatedTab) {
                         status.textContent = '🔄 페이지 이동 중...';
                         status.style.background = 'rgba(255, 193, 7, 0.3)';
-                        trackBtn.disabled = true;
+                        toggleTrackBtn(false);
 
                         waitForPageLoad(updatedTab.id, (loaded) => {
                             if (loaded) {
                                 status.textContent = '✅ 페이지 로드 완료. 분석 준비 완료';
                                 status.style.background = 'rgba(40, 167, 69, 0.3)';
-                                trackBtn.disabled = false;
+                                toggleTrackBtn(true);
                                 // trackBtn.click(); // 자동 분석 시작 원할 경우
                             } else {
                                 status.textContent = '⚠️ 페이지 로딩이 실패 했습니다';
                                 status.style.background = 'rgba(220, 53, 69, 0.3)';
-                                trackBtn.disabled = true;
+                                toggleTrackBtn(false);
                             }
                         });
                     });
                 } else {
                     status.textContent = '✅ 분석 준비 완료';
                     status.style.background = 'rgba(40, 167, 69, 0.3)';
-                    trackBtn.disabled = false;
+                    toggleTrackBtn(true);
                 }
             });
         } catch (e) {
             status.textContent = '❌ URL 분석 중 오류 발생';
             status.style.background = 'rgba(220, 53, 69, 0.3)';
-            trackBtn.disabled = true;
+            toggleTrackBtn(false);
         }
     });
 
+    function runExtraction({ useOriginalName }) {
+        return new Promise((resolve, reject) => {
+            chrome.storage.local.get(['exportOptions'], function (data) {
+                const opts = data.exportOptions || {};
+                const trackingOpts = {
+                    options: {
+                        tipTheScales: opts.tipTheScales || false,
+                        includeRank: opts.includeRank || false,
+                        appendDisplay: opts.appendDisplay || false
+                    }
+                };
+
+                chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
+                    chrome.scripting.executeScript({
+                        target: {tabId: tabs[0].id},
+                        func: async function (trackedSkills, trackingOpts, useOriginalName, playerName) {
+                            function toMinuteSeconds(rawTime) {
+                                const parts = rawTime.split(':');
+                                const minutes = String(parseInt(parts[0])).padStart(2, '0');
+                                const seconds = Math.floor(parseFloat(parts[1]));
+                                return minutes + ':' + String(seconds).padStart(2, '0');
+                            }
+
+                            const entries = [];
+                            await new Promise(resolve => setTimeout(resolve, 2000));
+                            let rows = document.querySelectorAll('tr[id^="event-row"]');
+                            if (rows.length === 0) rows = document.querySelectorAll('tr[class*="event"]');
+                            if (rows.length === 0) rows = document.querySelectorAll('table tr');
+                            if (rows.length === 0) return [];
+
+                            let tipTheScalesActive = false;
+
+                            for (let i = 0; i < rows.length; i++) {
+                                const row = rows[i];
+                                const timeCell = row.querySelector('.main-table-number');
+                                const eventCell = row.querySelector('.event-description-cell');
+                                if (!timeCell || !eventCell) continue;
+
+                                const rawTime = timeCell.textContent.trim();
+                                const time = toMinuteSeconds(rawTime);
+                                const cleanText = eventCell.textContent.replace(/\s+/g, '').toLowerCase();
+
+                                if (cleanText.includes('caststipthescales')) {
+                                    tipTheScalesActive = true;
+                                    continue;
+                                }
+
+                                for (const skill of trackedSkills) {
+                                    let Skill_En = skill.en.replace(/\s+/g, '').toLowerCase().trim();
+                                    let Skill_Ko = skill.ko.replace(/\s+/g, '').trim();
+
+                                    if (
+                                        cleanText.includes('casts' + Skill_En) ||
+                                        cleanText.includes('casts' + Skill_Ko)
+                                    ) {
+                                        let result;
+                                        const tipMatch = (
+                                            Skill_En === 'firebreath' || Skill_En === 'eternitysurge' ||
+                                            Skill_Ko === '불의숨결' || Skill_Ko === '영원의쇄도'
+                                        );
+
+                                        // ✅ 캐릭터명 결정 로직
+                                        let targetName = useOriginalName
+                                            ? cleanText.split("casts")[0]
+                                            : playerName;
+
+                                        if (tipTheScalesActive && tipMatch && trackingOpts.options.tipTheScales) {
+                                            result = `{time:${time}} - ${targetName} {spell:${skill.id}} - tip the scales`;
+                                            tipTheScalesActive = false;
+                                        } else {
+                                            let level = 'N/A';
+                                            for (let j = i + 1; j < Math.min(i + 10, rows.length); j++) {
+                                                const nextEvent = rows[j].querySelector('.event-description-cell');
+                                                if (!nextEvent) continue;
+                                                const nextText = nextEvent.textContent.replace(/\s+/g, '').toLowerCase();
+                                                if (
+                                                    nextText.includes('releases' + Skill_En + 'atempowermentlevel') ||
+                                                    nextText.includes('releases' + Skill_Ko + 'atempowermentlevel')
+                                                ) {
+                                                    const match = nextText.match(/level(\d+)/);
+                                                    if (match) level = match[1];
+                                                    break;
+                                                }
+                                            }
+                                            result = level === 'N/A' || !trackingOpts.options.includeRank
+                                                ? `{time:${time}} - ${targetName} {spell:${skill.id}}`
+                                                : `{time:${time}} - ${targetName} {spell:${skill.id}} - level ${level}`;
+
+                                            result = trackingOpts.options.appendDisplay
+                                                ? result.concat(` - ${skill.display}`)
+                                                : result;
+                                        }
+
+                                        entries.push(result);
+                                        break;
+                                    }
+                                }
+                            }
+                            return entries;
+                        },
+                        args: [trackedSkills, trackingOpts, useOriginalName, document.getElementById('playerName')?.value || '']
+                    }).then(res => {
+                        resolve(res && res[0] ? res[0].result : []);
+                    }).catch(reject);
+                });
+            });
+        });
+    }
+
+
 
     trackBtn.addEventListener('click', function () {
-        const playerName = playerNameInput.value.trim() || '';
-
-        // 플레이어 이름을 다시 한번 저장 (버튼 클릭 시)
-        chrome.storage.local.set({playerName: playerName});
-
-        trackBtn.disabled = true;
+        toggleTrackBtn(false);
         trackBtn.textContent = '분석 중...';
         status.textContent = '🔄 로그 분석 중...';
         status.className = 'status loading';
 
-        chrome.storage.local.get(['trackedSkills', 'exportOptions'], function (data) {
-            const rawSkills = data.trackedSkills || {};
-            const opts = data.exportOptions || {};
-
-            const trackedSkills = Object.entries(rawSkills)
-                .filter(([_, value]) => value.enabled)
-                .map(([id, value]) => ({
-                    id,
-                    display: value.display,
-                    en: value.en.toLowerCase(),
-                    ko: value.ko
-                }));
-            const trackingOpts = {
-                options: {
-                    tipTheScales: opts.tipTheScales || false,
-                    includeRank: opts.includeRank || false,
-                    appendDisplay: opts.appendDisplay || false
+        runExtraction({ useOriginalName: false })
+            .then(skillEvents => {
+                toggleTrackBtn(true);
+                trackBtn.textContent = '스킬 추적';
+                currentResults = skillEvents;
+                if (!skillEvents || skillEvents.length === 0) {
+                    status.textContent = '⚠️ 추적 가능한 스킬이 없습니다';
+                    return;
                 }
-            };
-
-
-            chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
-                chrome.scripting.executeScript({
-                    target: {tabId: tabs[0].id},
-                    func: async function (playerName, trackedSkills, trackingOpts) {
-                        function toMinuteSeconds(rawTime) {
-                            const parts = rawTime.split(':');
-                            const minutes = String(parseInt(parts[0])).padStart(2, '0');
-                            const seconds = Math.floor(parseFloat(parts[1]));
-                            return minutes + ':' + String(seconds).padStart(2, '0');
-                        }
-
-                        const entries = [];
-
-                        try {
-                            if (typeof selectTextEventsView === 'function') {
-                                selectTextEventsView();
-                            }
-                        } catch (_) {
-                        }
-
-                        await new Promise(resolve => setTimeout(resolve, 2000));
-                        let rows = document.querySelectorAll('tr[id^="event-row"]');
-                        if (rows.length === 0) rows = document.querySelectorAll('tr[class*="event"]');
-                        if (rows.length === 0) rows = document.querySelectorAll('table tr');
-                        if (rows.length === 0) return [];
-
-                        let tipTheScalesActive = false;
-
-                        for (let i = 0; i < rows.length; i++) {
-                            const row = rows[i];
-                            const timeCell = row.querySelector('.main-table-number');
-                            const eventCell = row.querySelector('.event-description-cell');
-                            if (!timeCell || !eventCell) continue;
-
-                            const rawTime = timeCell.textContent.trim();
-                            const time = toMinuteSeconds(rawTime);
-                            const cleanText = eventCell.textContent.replace(/\s+/g, '').toLowerCase();
-
-                            if (cleanText.includes('caststipthescales')) {
-                                tipTheScalesActive = true;
-                                continue;
-                            }
-
-                            for (const skill of trackedSkills) {
-                                //console.log(skill);
-                                let Skill_En = skill.en.replace(/\s+/g, '').toLowerCase().trim();
-                                let Skill_Ko = skill.ko.replace(/\s+/g, '').trim();
-                                if (
-                                    cleanText.includes('casts' + Skill_En) ||
-                                    cleanText.includes('casts' + skill.ko)
-                                ) {
-                                    let result;
-                                    const tipMatch = (
-                                        Skill_En === 'firebreath' || Skill_En === 'eternitysurge' ||
-                                        Skill_Ko === '불의숨결' || Skill_Ko === '영원의쇄도'
-                                    );
-
-                                    if (tipTheScalesActive && tipMatch && trackingOpts.options.tipTheScales) {
-                                        result = `{time:${time}} - ${playerName} {spell:${skill.id}} - tip the scales`;
-                                        tipTheScalesActive = false;
-                                    } else {
-                                        let level = 'N/A';
-                                        for (let j = i + 1; j < Math.min(i + 10, rows.length); j++) {
-                                            const nextEvent = rows[j].querySelector('.event-description-cell');
-                                            if (!nextEvent) continue;
-                                            const nextText = nextEvent.textContent.replace(/\s+/g, '').toLowerCase();
-                                            if (
-                                                nextText.includes('releases' + Skill_En + 'atempowermentlevel') ||
-                                                nextText.includes('releases' + Skill_Ko + 'atempowermentlevel')
-                                            ) {
-                                                const match = nextText.match(/level(\d+)/);
-                                                if (match) level = match[1];
-                                                break;
-                                            }
-                                        }
-                                        result = level === 'N/A' || !trackingOpts.options.includeRank
-                                            ? `{time:${time}} - ${playerName} {spell:${skill.id}}`
-                                            : `{time:${time}} - ${playerName} {spell:${skill.id}} - level ${level}`;
-
-                                        result = trackingOpts.options.appendDisplay
-                                            ? result.concat(` - ${skill.display}`)
-                                            : result;
-                                    }
-
-                                    entries.push(result);
-                                    break;
-                                }
-                            }
-                        }
-                        return entries;
-                    },
-                    args: [playerName, trackedSkills, trackingOpts]
-                }).then(function (results) {
-                    console.log(results);
-                    trackBtn.disabled = false;
-                    trackBtn.textContent = '스킬 추적';
-
-                    if (chrome.runtime.lastError) {
-                        status.textContent = '❌ 오류 발생: ' + chrome.runtime.lastError.message;
-                        status.className = 'status error';
-                        return;
-                    }
-
-                    if (results && results[0] && results[0].result) {
-                        const skillEvents = results[0].result;
-                        currentResults = skillEvents;
-
-                        if (skillEvents.length === 0) {
-                            status.textContent = '⚠️ 추적 가능한 스킬이 없습니다';
-                            status.className = 'status';
-                            return;
-                        }
-
-                        status.textContent = `✅ ${skillEvents.length}개의 스킬 이벤트 발견`;
-                        status.className = 'status';
-                        status.style.background = 'rgba(40, 167, 69, 0.3)';
-                        displayResults(skillEvents);
-                    } else {
-                        status.textContent = '❌ 결과를 가져올 수 없습니다';
-                        status.className = 'status error';
-                    }
-                }).catch(function (error) {
-                    console.error('executeScript 오류:', error);
-                    trackBtn.disabled = false;
-                    trackBtn.textContent = '스킬 추적';
-                    status.textContent = '❌ 스크립트 실행 중 오류 발생';
-                    status.className = 'status error';
-                });
+                status.textContent = `✅ ${skillEvents.length}개의 스킬 이벤트 발견`;
+                displayResults(skillEvents);
+            })
+            .catch(err => {
+                console.error(err);
+                toggleTrackBtn(true);
+                trackBtn.textContent = '스킬 추적';
+                status.textContent = '❌ 오류 발생';
             });
-        });
+    });
+
+    rawTrackBtn.addEventListener('click', function () {
+        toggleTrackBtn(false);
+        rawTrackBtn.textContent = '분석 중...';
+        status.textContent = '🔄 원본 로그 분석 중...';
+        status.className = 'status loading';
+
+        runExtraction({ useOriginalName: true })
+            .then(skillEvents => {
+                toggleTrackBtn(true);
+                rawTrackBtn.textContent = '원본 추출';
+                currentResults = skillEvents;
+                if (!skillEvents || skillEvents.length === 0) {
+                    status.textContent = '⚠️ 추적 가능한 원본 스킬이 없습니다';
+                    return;
+                }
+                status.textContent = `✅ ${skillEvents.length}개의 원본 스킬 이벤트 발견`;
+                displayResults(skillEvents);
+            })
+            .catch(err => {
+                console.error(err);
+                toggleTrackBtn(true);
+                rawTrackBtn.textContent = '원본 추출';
+                status.textContent = '❌ 오류 발생';
+            });
     });
 
     clearBtn.addEventListener('click', function () {
@@ -324,6 +429,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     copyBtn.addEventListener('click', function () {
+        console.log(currentResults);
         if (currentResults.length === 0) return;
         const textToCopy = currentResults.join('\n');
         navigator.clipboard.writeText(textToCopy).then(function () {
@@ -355,5 +461,17 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         results.classList.remove('hidden');
         copyBtn.classList.remove('hidden');
+    }
+
+
+    // 1 == on // 2 == off
+    function toggleTrackBtn(toggle) {
+        if(toggle == true) {
+            rawTrackBtn.disabled = false;
+            trackBtn.disabled = false;
+        }else{
+            rawTrackBtn.disabled = true;
+            trackBtn.disabled = true;
+        }
     }
 });

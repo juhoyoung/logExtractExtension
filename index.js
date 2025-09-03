@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', function () {
     let isEditing = false;
     let editingSkillId = null;
 
+    let collapsedSections = {};
+
     // 지원 직업 코드 목록 추출
     const exportClassSelect = document.getElementById('exportClassSelect');
 
@@ -129,24 +131,25 @@ document.addEventListener('DOMContentLoaded', function () {
                         <span class="class-title">${displayName}</span>
                         <span class="skill-count">${classSkills.length}개</span>
                     </div>
-                    <span class="class-toggle">▼</span>
+                    <span class="class-toggle collapsed">▼</span>
                 </div>
                 
-                <div class="skills-container" data-skills="${className}">
+                <div class="skills-container collapsed" data-skills="${className}">
                     <div class="skill-header">
                         <div class="skill-col-check">
                             <button class="toggle-all" data-toggle-all="${className}">전체</button>
                         </div>
-                        <div class="skill-col">이름</div>
+                        <div class="skill-col">이름(Display)</div>
                         <div class="skill-col">ID</div>
                         <div class="skill-col">영어명</div>
                         <div class="skill-col">한글명</div>
+                        <div class="skill-col">Spell ID 기준 추출</div>
                         <div class="actions-col">작업</div>
                     </div>
                     ${classSkills.map(skill => `
                     <div class="skill-item ${isEditing && editingSkillId === skill.id ? 'editing' : ''}">
                         <div class="skill-col-check">
-                            <input type="checkbox" ${skill.enabled ? 'checked' : ''} data-id="${skill.id}" id="c${skill.id}"/>
+                            <input type="checkbox" ${skill.enabled ? 'checked' : ''} data-id="${skill.id}" id="c${skill.id}" class="enabled-toggle"/>
                         </div>
                         <div class="skill-col">
                             <label for="c${skill.id}">
@@ -159,6 +162,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         </div>
                         <div class="skill-col">${skill.en || 'N/A'}</div>
                         <div class="skill-col">${skill.ko || 'N/A'}</div>
+                        <div class="skill-col">
+                            <input type="checkbox" ${skill.extractBySpellId ? 'checked' : ''} data-extract="${skill.id}"/>
+                        </div>
                         <div class="actions-col">
                             <button data-edit="${skill.id}">수정</button>
                             <button data-remove="${skill.id}">삭제</button>
@@ -171,7 +177,37 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             // 토글 이벤트 리스너 추가
-            addToggleListeners();
+            restoreCollapseStateThenBind();
+        });
+    }
+
+    function applyCollapsedState() {
+        const headers = document.querySelectorAll('.class-header');
+        headers.forEach(header => {
+            const className = header.dataset.class;
+            const container = document.querySelector(`[data-skills="${className}"]`);
+            const toggle = header.querySelector('.class-toggle');
+            if (!container || !toggle) return;
+
+            // 저장된 값이 true면 접힘, false면 펼침. (undefined면 템플릿 기본 상태 유지)
+            const state = collapsedSections[className];
+            if (state === true) {
+                container.classList.add('collapsed');
+                toggle.classList.add('collapsed');
+                toggle.textContent = '▶'; // 접힘 표시
+            } else if (state === false) {
+                container.classList.remove('collapsed');
+                toggle.classList.remove('collapsed');
+                toggle.textContent = '▼'; // 펼침 표시
+            }
+        });
+    }
+
+    function restoreCollapseStateThenBind() {
+        chrome.storage.local.get('collapsedSections', data => {
+            collapsedSections = data.collapsedSections || {};
+            applyCollapsedState();
+            addToggleListeners(); // 복원 후 리스너 바인딩
         });
     }
 
@@ -182,16 +218,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 const className = this.dataset.class;
                 const skillsContainer = document.querySelector(`[data-skills="${className}"]`);
                 const toggle = this.querySelector('.class-toggle');
+                if (!skillsContainer || !toggle) return;
 
-                if (skillsContainer.classList.contains('collapsed')) {
-                    skillsContainer.classList.remove('collapsed');
-                    toggle.classList.remove('collapsed');
-                    toggle.textContent = '▼';
-                } else {
-                    skillsContainer.classList.add('collapsed');
-                    toggle.classList.add('collapsed');
-                    toggle.textContent = '▶';
-                }
+                // 현재 상태 기준으로 "이후 상태"를 명확히 계산
+                const willCollapse = !skillsContainer.classList.contains('collapsed'); // 펼쳐진 상태면 접히도록
+
+                skillsContainer.classList.toggle('collapsed', willCollapse);
+                toggle.classList.toggle('collapsed', willCollapse);
+                toggle.textContent = willCollapse ? '▶' : '▼';
+
+                // ★ 섹션별로 상태 저장
+                collapsedSections[className] = willCollapse;
+                chrome.storage.local.set({ collapsedSections });
             });
         });
     }
@@ -237,13 +275,26 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
+        // ID 기준
+        if (e.target.dataset.extract) {
+            const id = e.target.dataset.extract;
+            chrome.storage.local.get('trackedSkills', (data) => {
+                const skills = data.trackedSkills || {};
+                if (skills[id]) {
+                    skills[id].extractBySpellId = e.target.checked;
+                    chrome.storage.local.set({trackedSkills: skills});
+                }
+            });
+        }
+
+
         // 전체 토글
         const toggleAllClass = e.target.dataset.toggleAll;
         if (toggleAllClass) {
             const container = document.querySelector(`[data-skills="${toggleAllClass}"]`);
             if (!container) return;
 
-            const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+            const checkboxes = container.querySelectorAll('.enabled-toggle');
             const allChecked = [...checkboxes].every(cb => cb.checked);
 
             chrome.storage.local.get('trackedSkills', (data) => {
@@ -266,8 +317,10 @@ document.addEventListener('DOMContentLoaded', function () {
         const classCode = document.getElementById('classSelect').value.trim();
         const id = document.getElementById('spellId').value.trim();
         let displayName = document.getElementById('displayName').value.trim();
-        const en = document.getElementById('englishName').value.replace(/\s/g, '').trim().toLowerCase();
-        const ko = document.getElementById('koreanName').value.replace(/\s/g, '').trim();
+        /*const en = document.getElementById('englishName').value.replace(/\s/g, '').trim().toLowerCase();
+        const ko = document.getElementById('koreanName').value.replace(/\s/g, '').trim();*/
+        const en = document.getElementById('englishName').value.trim();
+        const ko = document.getElementById('koreanName').value.trim();
 
         // 필수 필드 검증
         if (!classCode) {
@@ -310,7 +363,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 en: en || '',
                 ko: ko || '',
                 enabled: true,
-                class: classCode
+                class: classCode,
+                extractBySpellId: false
             };
 
             chrome.storage.local.set({trackedSkills: skills}, () => {
@@ -422,15 +476,18 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
 
                     // en/ko 정리
-                    const cleanedEn = skill.en?.replace(/\s/g, '').toLowerCase() || '';
-                    const cleanedKo = skill.ko?.replace(/\s/g, '') || '';
+                    /*const cleanedEn = skill.en?.replace(/\s/g, '').toLowerCase() || '';
+                    const cleanedKo = skill.ko?.replace(/\s/g, '') || '';*/
+                    const cleanedEn = skill.en.trim();
+                    const cleanedKo = skill.ko.trim();
 
                     cleanedSkills[key] = {
                         display: skill.display,
                         en: cleanedEn,
                         ko: cleanedKo,
                         enabled: skill.enabled !== false,
-                        class: skill.class
+                        class: skill.class,
+                        extractBySpellId: skill.extractBySpellId  !== false
                     };
                 }
 

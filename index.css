@@ -111,7 +111,7 @@ button[data-remove]:hover {
     padding: 0;
     max-height: 1000px;
     overflow: hidden;
-    transition: max-height 0.3s ease, padding 0.3s ease;
+    /* transition: max-height 0.3s ease, padding 0.3s ease; */
 }
 
 .skills-container.collapsed {
@@ -219,7 +219,7 @@ h2 {
 }
 
 .skill-col-check{
-    flex: 0.2;
+    flex: 1
 }
 
 .skill-col {
