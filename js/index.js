@@ -1,5 +1,5 @@
-import {classInfo} from './classInfo.js';
-import {defaultSkills} from './defaultSkills.js';
+import {classInfo} from '../init/classInfo.js';
+import {defaultSkills} from '../init/defaultSkills.js';
 
 document.addEventListener('DOMContentLoaded', function () {
     const skillsByClassElement = document.getElementById('skillsByClass');
@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let editingSkillId = null;
 
     let collapsedSections = {};
+    let toggleListenersInitialized = false; // 전역 토글 리스너 초기화 여부 추적
 
     // 지원 직업 코드 목록 추출
     const exportClassSelect = document.getElementById('exportClassSelect');
@@ -173,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 skillsByClassElement.appendChild(classSection);
             }
 
-            // 토글 이벤트 리스너 추가
+            // 토글 이벤트 리스너 추가 (중복 방지)
             restoreCollapseStateThenBind();
         });
     }
@@ -204,30 +205,36 @@ document.addEventListener('DOMContentLoaded', function () {
         chrome.storage.local.get('collapsedSections', data => {
             collapsedSections = data.collapsedSections || {};
             applyCollapsedState();
-            addToggleListeners(); // 복원 후 리스너 바인딩
+
+            // 전역 토글 리스너는 한 번만 초기화
+            if (!toggleListenersInitialized) {
+                addGlobalToggleListener();
+                toggleListenersInitialized = true;
+            }
         });
     }
 
-    function addToggleListeners() {
-        const classHeaders = document.querySelectorAll('.class-header');
-        classHeaders.forEach(header => {
-            header.addEventListener('click', function () {
-                const className = this.dataset.class;
-                const skillsContainer = document.querySelector(`[data-skills="${className}"]`);
-                const toggle = this.querySelector('.class-toggle');
-                if (!skillsContainer || !toggle) return;
+    // 이벤트 위임을 사용한 전역 토글 리스너
+    function addGlobalToggleListener() {
+        document.addEventListener('click', function(e) {
+            const header = e.target.closest('.class-header');
+            if (!header) return;
 
-                // 현재 상태 기준으로 "이후 상태"를 명확히 계산
-                const willCollapse = !skillsContainer.classList.contains('collapsed'); // 펼쳐진 상태면 접히도록
+            const className = header.dataset.class;
+            const skillsContainer = document.querySelector(`[data-skills="${className}"]`);
+            const toggle = header.querySelector('.class-toggle');
+            if (!skillsContainer || !toggle) return;
 
-                skillsContainer.classList.toggle('collapsed', willCollapse);
-                toggle.classList.toggle('collapsed', willCollapse);
-                toggle.textContent = willCollapse ? '▶' : '▼';
+            // 현재 상태 기준으로 "이후 상태"를 명확히 계산
+            const willCollapse = !skillsContainer.classList.contains('collapsed'); // 펼쳐진 상태면 접히도록
 
-                // ☆ 섹션별로 상태 저장
-                collapsedSections[className] = willCollapse;
-                chrome.storage.local.set({ collapsedSections });
-            });
+            skillsContainer.classList.toggle('collapsed', willCollapse);
+            toggle.classList.toggle('collapsed', willCollapse);
+            toggle.textContent = willCollapse ? '▶' : '▼';
+
+            // ☆ 섹션별로 상태 저장
+            collapsedSections[className] = willCollapse;
+            chrome.storage.local.set({ collapsedSections });
         });
     }
 

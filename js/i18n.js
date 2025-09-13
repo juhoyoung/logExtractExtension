@@ -13,7 +13,6 @@ class ChromeI18n {
         }
     }
 
-    // Chrome i18n API를 사용한 메시지 가져오기
     getMessage(key, substitutions = []) {
         return chrome.i18n.getMessage(key, substitutions) || key;
     }
@@ -23,7 +22,6 @@ class ChromeI18n {
         return chrome.i18n.getUILanguage();
     }
 
-    // 페이지의 모든 data-i18n 속성을 가진 요소들을 번역
     translatePage() {
         const elements = document.querySelectorAll('[data-i18n]');
         elements.forEach(element => {

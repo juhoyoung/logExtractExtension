@@ -127,10 +127,19 @@ document.addEventListener('DOMContentLoaded', function () {
                     let trackedSkillNames = new Set();
                     let currentSkillIds = new Set();
                     let trackedSkillIds = new Set();
+                    let hasTypeCast = false;
+                    let hasSourcePlayer = false;
+
                     // 스킬 검사
                     if (pinsParam) {
                         try {
                             const decoded = decodeURIComponent(pinsParam);
+
+                            // type="cast" 포함 여부 체크
+                            hasTypeCast = /type\s*=\s*"cast"/i.test(decoded);
+
+                            // source.type="player" 포함 여부 체크
+                            hasSourcePlayer = /source\.type\s*=\s*"player"/i.test(decoded);
 
                             // ability.name IN (...)
                             const nameIndex = decoded.search(/ability\.name\s+IN\s*\(/i);
@@ -157,6 +166,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
 
                     trackedSkills.forEach(m => {
+                        console.log(trackedSkills)
                         if (m.extractBySpellId) {
                             trackedSkillIds.add(String(m.id));
                         }else {
@@ -175,7 +185,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         trackedNamesArr.every(name => currentNamesArr.includes(name));
                     const idsEqual   = trackedIdsArr.length === currentIdsArr.length &&
                         trackedIdsArr.every(id => currentIdsArr.includes(id));
-                    const isSame = namesEqual && idsEqual;
+                    const isSame = namesEqual && idsEqual & hasTypeCast && hasSourcePlayer;
 
                     if (!isSame) {
                         // 새로운 pins 파라미터 생성
@@ -192,9 +202,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
                         let expr = parts.join(' OR ');
                         if (expr) {
-                            expr = `type="cast" AND (${expr})`;
+                            expr = `type="cast" AND source.type="player" AND (${expr})`;
                         } else {
-                            expr = `type="cast"`;
+                            expr = `type="cast AND source.type="player"`;
                         }
                         const pinsString = `2$Off$#244F4B$expression$${expr}`;
                         const encodedPins = pinsString;

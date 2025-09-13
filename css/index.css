@@ -109,14 +109,20 @@ button[data-remove]:hover {
 
 .skills-container {
     padding: 0;
-    max-height: 1000px;
     overflow: hidden;
-    /* transition: max-height 0.3s ease, padding 0.3s ease; */
+    transition: max-height 0.3s ease, padding 0.3s ease;
+    max-height: none; /* 기본적으로 높이 제한 없음 */
 }
 
 .skills-container.collapsed {
     max-height: 0;
     padding: 0;
+}
+
+/* 펼쳐진 상태에서는 높이를 자동으로 조절 */
+.skills-container:not(.collapsed) {
+    max-height: none;
+    height: auto;
 }
 
 .skill-item {
@@ -273,7 +279,6 @@ button[data-edit] {
 .skill-opt-col-check{
     flex: 0.02;
 }
-
 
 .nav-menu {
     display: flex;
