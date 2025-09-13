@@ -115,8 +115,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 const pinsParam = params.get('pins');
 
                 // type, view 검사
-                if (typeParam !== 'casts') {
-                    params.set('type', 'casts');
+                if (typeParam !== 'summary') {
+                    params.set('type', 'summary');
                     shouldRedirect = true;
                 }
                 if (viewParam !== 'events') {
@@ -208,7 +208,12 @@ document.addEventListener('DOMContentLoaded', function () {
                         const idClause = [...trackedSkillIds].join(', ');
                         parts.push(`ability.id IN (${idClause})`);
                     }
-                    const expr = parts.join(' OR ');
+                    let expr = parts.join(' OR ');
+                    if (expr) {
+                        expr = `type="cast" AND (${expr})`;
+                    } else {
+                        expr = `type="cast"`; // 스킬 조건이 없더라도 cast만 필터링
+                    }
                     const pinsString = `2$Off$#244F4B$expression$${expr}`;
                     //console.log(pinsString)
                     const encodedPins = pinsString;

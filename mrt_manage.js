@@ -182,7 +182,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const userSection = document.getElementById('userSection');
         const userGrid = document.getElementById('userGrid');
         const userStats = document.getElementById('userStats');
-        const extractBtn = document.getElementById('extractBtn');
 
         if (userDataMap.size === 0) {
             userGrid.innerHTML = '<div class="empty-state">발견된 유저 아이디가 없습니다.</div>';
@@ -191,40 +190,49 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        // 통계 정보 업데이트
+        // 통계
         const totalLines = allLines.length;
         const linesWithUsers = Array.from(userDataMap.values()).reduce((sum, data) => sum + data.count, 0);
         userStats.innerHTML = `
-                <div class="stat-item">전체 라인: ${totalLines}개</div>
-                <div class="stat-item">유저 식별 라인: ${linesWithUsers}개</div>
-                <div class="stat-item">발견된 유저: ${userDataMap.size}명</div>
-            `;
+        <div class="stat-item">전체 라인: ${totalLines}개</div>
+        <div class="stat-item">유저 식별 라인: ${linesWithUsers}개</div>
+        <div class="stat-item">발견된 유저: ${userDataMap.size}명</div>
+    `;
 
-        // 유저 목록을 발생 횟수 순으로 정렬
         const sortedUsers = Array.from(userDataMap.entries()).sort((a, b) => b[1].count - a[1].count);
 
         // 유저 목록 생성
         userGrid.innerHTML = sortedUsers.map(([userId, data]) => `
-                <div class="user-item" data-user="${userId}">
+            <div class="user-item" data-user="${userId}">
+                <div class="user-info">
                     <input type="checkbox" id="user_${userId}" data-user="${userId}">
-                    <label for="user_${userId}" style="cursor: pointer; flex: 1;">${userId}</label>
+                    <label for="user_${userId}" style="cursor: pointer;">${userId}</label>
                     <span class="user-count">${data.count}회</span>
                 </div>
-            `).join('');
-
-        // 체크박스 이벤트 리스너 추가
-        userGrid.addEventListener('change', updateExtractButton);
-        userGrid.addEventListener('click', (e) => {
-            if (e.target.classList.contains('user-item')) {
-                const checkbox = e.target.querySelector('input[type="checkbox"]');
-                checkbox.checked = !checkbox.checked;
-                e.target.classList.toggle('selected', checkbox.checked);
-                updateExtractButton();
-            }
-        });
+                <div class="user-replace">
+                    <input type="text" class="replace-input" data-user="${userId}" placeholder="변경할 아이디">
+                </div>
+            </div>
+        `).join('');
 
         userSection.style.display = 'block';
         updateExtractButton();
+
+        document.querySelectorAll('.user-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                // input, label, input[type="text"] 클릭 시에는 무시 (중복 방지)
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'LABEL') return;
+
+                const checkbox = item.querySelector('input[type="checkbox"]');
+                checkbox.checked = !checkbox.checked;
+                item.classList.toggle('selected', checkbox.checked);
+                updateExtractButton();
+            });
+        });
+
+        document.querySelectorAll('#userGrid input[type="checkbox"]').forEach(cb => {
+            cb.addEventListener('change', updateExtractButton);
+        });
     }
 
     // 추출 버튼 상태 업데이트
@@ -250,18 +258,32 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        const extractedLines = [];
-
-        // 원본 순서를 유지하면서 선택된 유저의 라인만 추출
-        allLines.forEach(line => {
-            const userIds = extractUserIds(line); // 한 줄에서 여러 유저 추출
-            // 선택된 유저 중 하나라도 포함되어 있으면 해당 라인 추가
-            if (userIds.some(userId => selectedUsers.includes(userId))) {
-                extractedLines.push(line);
+        // Replace 맵 생성
+        const replaceInputs = document.querySelectorAll('#userGrid .replace-input');
+        const replaceMap = {};
+        replaceInputs.forEach(input => {
+            if (input.value.trim()) {
+                replaceMap[input.dataset.user] = input.value.trim();
             }
         });
 
-        // 결과 표시
+        const extractedLines = [];
+
+        allLines.forEach(line => {
+            const userIds = extractUserIds(line);
+            if (userIds.some(userId => selectedUsers.includes(userId))) {
+                let newLine = line;
+                userIds.forEach(uid => {
+                    if (replaceMap[uid]) {
+                        const regex = new RegExp(`\\b${uid}\\b`, 'g');
+                        newLine = newLine.replace(regex, replaceMap[uid]);
+                    }
+                });
+                extractedLines.push(newLine);
+            }
+        });
+
+        // 결과 출력 (기존 코드 동일)
         const resultSection = document.getElementById('resultSection');
         const resultText = document.getElementById('resultText');
         const resultStats = document.getElementById('resultStats');
@@ -270,30 +292,22 @@ document.addEventListener('DOMContentLoaded', function () {
         const resultString = extractedLines.join('\n');
         resultText.value = resultString;
 
-        // 통계 정보
         const selectedUserStats = selectedUsers.map(userId => {
             const data = userDataMap.get(userId);
-            return `${userId}(${data.count})`;
+            const replaceInfo = replaceMap[userId] ? ` → ${replaceMap[userId]}` : '';
+            return `${userId}${replaceInfo} (${data.count})`;
         }).join(', ');
 
         resultStats.innerHTML = `
-                <div class="stat-item">선택된 유저: ${selectedUsers.length}명</div>
-                <div class="stat-item">추출된 라인: ${extractedLines.length}개</div>
-                <div class="stat-item">유저별 라인수: ${selectedUserStats}</div>
-            `;
+        <div class="stat-item">선택된 유저: ${selectedUsers.length}명</div>
+        <div class="stat-item">추출된 라인: ${extractedLines.length}개</div>
+        <div class="stat-item">유저별 라인수: ${selectedUserStats}</div>
+    `;
 
-        // 클립보드에 복사
-        navigator.clipboard.writeText(resultString)
-            .then(() => {
-                copyNotification.style.display = 'block';
-                setTimeout(() => {
-                    copyNotification.style.display = 'none';
-                }, 3000);
-            })
-            .catch(err => {
-                console.error('클립보드 복사 실패:', err);
-                alert('클립보드 복사에 실패했습니다.');
-            });
+        navigator.clipboard.writeText(resultString).then(() => {
+            copyNotification.style.display = 'block';
+            setTimeout(() => copyNotification.style.display = 'none', 3000);
+        });
 
         resultSection.style.display = 'block';
         resultSection.scrollIntoView({behavior: 'smooth'});

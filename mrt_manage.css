@@ -40,10 +40,9 @@ textarea {
 }
 
 .user-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: 10px;
-    margin-bottom: 15px;
 }
 
 .user-item {
@@ -55,6 +54,15 @@ textarea {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.2s;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+
+}
+
+.user-item .replace-input {
+    user-select: text;
 }
 
 .user-item:hover {
@@ -185,4 +193,34 @@ button:disabled {
 .nav-link.active {
     color: #007cba;
     border-bottom: 3px solid #007cba;
+}
+
+.user-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    gap: 8px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+}
+
+.user-replace {
+    flex-shrink: 0;
+}
+
+.user-replace input {
+    padding: 4px 6px;
+    font-size: 13px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 120px;
 }
