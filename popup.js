@@ -24,459 +24,409 @@ function waitForPageLoad(tabId, callback) {
     }, 500);
 }
 
-
 // 저장된 스킬 목록
 let trackedSkills = [];
 
 document.addEventListener('DOMContentLoaded', function () {
-    const settingsBtn = document.getElementById('settingsBtn');
-    const trackBtn = document.getElementById('trackBtn');
-    const clearBtn = document.getElementById('clearBtn');
-    const copyBtn = document.getElementById('copyBtn');
-    const status = document.getElementById('status');
-    const results = document.getElementById('results');
-    const resultsList = document.getElementById('resultsList');
-    const playerNameInput = document.getElementById('playerName');
-    const rawTrackBtn = document.getElementById('rawTrackBtn');
+    // i18n 초기화 완료 후 실행
+    const initializeAfterI18n = () => {
+        const settingsBtn = document.getElementById('settingsBtn');
+        const trackBtn = document.getElementById('trackBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const status = document.getElementById('status');
+        const results = document.getElementById('results');
+        const resultsList = document.getElementById('resultsList');
+        const playerNameInput = document.getElementById('playerName');
+        const rawTrackBtn = document.getElementById('rawTrackBtn');
 
-    let currentResults = [];
+        let currentResults = [];
 
-    chrome.storage.local.get(['trackedSkills'], function (data) {
-        const rawSkills = data.trackedSkills || {};
-        trackedSkills = Object.entries(rawSkills)
-            .filter(([_, value]) => value.enabled)
-            .map(([id, value]) => ({
-                id,
-                display: value.display,
-                en: value.en,
-                ko: value.ko,
-                extractBySpellId: value.extractBySpellId
-            }));
-    });
+        chrome.storage.local.get(['trackedSkills'], function (data) {
+            const rawSkills = data.trackedSkills || {};
+            trackedSkills = Object.entries(rawSkills)
+                .filter(([_, value]) => value.enabled)
+                .map(([id, value]) => ({
+                    id,
+                    display: value.display,
+                    en: value.en,
+                    ko: value.ko,
+                    extractBySpellId: value.extractBySpellId
+                }));
+        });
 
-
-    // 페이지 로드 시 저장된 플레이어 이름 불러오기
-    chrome.storage.local.get('playerName', function (data) {
-        if (data.playerName) {
-            playerNameInput.value = data.playerName;
-        }
-    });
-
-    // 플레이어 이름 입력 시 자동 저장
-    playerNameInput.addEventListener('input', function () {
-        const playerName = playerNameInput.value.trim();
-        chrome.storage.local.set({playerName: playerName});
-    });
-
-    // 포커스 아웃 시에도 저장 (안전장치)
-    playerNameInput.addEventListener('blur', function () {
-        const playerName = playerNameInput.value.trim();
-        chrome.storage.local.set({playerName: playerName});
-    });
-
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-        const currentTab = tabs[0];
-        try {
-            const url = new URL(currentTab.url);
-            const params = url.searchParams;
-
-            const isReportPath = url.pathname.startsWith('/reports/');
-            const hasFight = params.has('fight');
-            const hasSource = params.has('source');
-
-            if (!isReportPath) {
-                status.textContent = '❌ 잘못된 경로 입니다: 추출 하고 싶은 페이지로 이동하세요.';
-                status.style.background = 'rgba(220, 53, 69, 0.3)';
-                toggleTrackBtn(false)
-                return;
+        // 페이지 로드 시 저장된 플레이어 이름 불러오기
+        chrome.storage.local.get('playerName', function (data) {
+            if (data.playerName) {
+                playerNameInput.value = data.playerName;
             }
-            if (!hasFight) {
-                status.textContent = '❌ 분석 실패: 추출 하고 싶은 전투를 선택 해주세요.';
-                status.style.background = 'rgba(220, 53, 69, 0.3)';
-                toggleTrackBtn(false)
-                return;
-            }
-            /*if (!hasSource) {
-                status.textContent = '❌ 분석 실패: 추출 하고 싶은 유저를 선택해주세요.';
-                status.style.background = 'rgba(220, 53, 69, 0.3)';
-                toggleTrackBtn(false)
-                return;
-            }*/
+        });
 
-            // exportOptions에서 translatePage 가져오기
-            chrome.storage.local.get('exportOptions', function (data) {
-                const translatePage = data.exportOptions?.translatePage === true;
+        // 플레이어 이름 입력 시 자동 저장
+        playerNameInput.addEventListener('input', function () {
+            const playerName = playerNameInput.value.trim();
+            chrome.storage.local.set({playerName: playerName});
+        });
 
-                let shouldRedirect = false;
+        // 포커스 아웃 시에도 저장 (안전장치)
+        playerNameInput.addEventListener('blur', function () {
+            const playerName = playerNameInput.value.trim();
+            chrome.storage.local.set({playerName: playerName});
+        });
 
-                const typeParam = params.get('type');
-                const viewParam = params.get('view');
-                const hasTranslate = params.get('translate') === 'true';
-                const pinsParam = params.get('pins');
+        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+            const currentTab = tabs[0];
+            try {
+                const url = new URL(currentTab.url);
+                const params = url.searchParams;
 
-                // type, view 검사
-                if (typeParam !== 'summary') {
-                    params.set('type', 'summary');
-                    shouldRedirect = true;
+                const isReportPath = url.pathname.startsWith('/reports/');
+                const hasFight = params.has('fight');
+                const hasSource = params.has('source');
+
+                if (!isReportPath) {
+                    status.textContent = t('status_invalid_path');
+                    status.style.background = 'rgba(220, 53, 69, 0.3)';
+                    toggleTrackBtn(false)
+                    return;
                 }
-                if (viewParam !== 'events') {
-                    params.set('view', 'events');
-                    shouldRedirect = true;
-                }
-                // translate 검사
-                if (translatePage && !hasTranslate) {
-                    params.set('translate', 'true');
-                    shouldRedirect = true;
+                if (!hasFight) {
+                    status.textContent = t('status_no_fight');
+                    status.style.background = 'rgba(220, 53, 69, 0.3)';
+                    toggleTrackBtn(false)
+                    return;
                 }
 
+                // exportOptions에서 translatePage 가져오기
+                chrome.storage.local.get('exportOptions', function (data) {
+                    const translatePage = data.exportOptions?.translatePage === true;
 
-                let currentSkillNames = new Set();
-                let trackedSkillNames = new Set();
-                let currentSkillIds = new Set();
-                let trackedSkillIds = new Set();
-                // 스킬 검사
-                if (pinsParam) {
-                    try {
-                        const decoded = decodeURIComponent(pinsParam);
-                        console.log(decoded);
+                    let shouldRedirect = false;
 
-                        // --------------------------
-                        // ability.name IN (...)
-                        // --------------------------
-                        const nameIndex = decoded.search(/ability\.name\s+IN\s*\(/i);
-                        if (nameIndex !== -1) {
-                            // ability.id IN (...) 절이 있으면 그 앞까지만 nameSegment로 사용
-                            const idIndex = decoded.search(/ability\.id\s+IN\s*\(/i);
-                            const nameSegment = idIndex !== -1
-                                ? decoded.slice(nameIndex, idIndex)
-                                : decoded.slice(nameIndex);
+                    const typeParam = params.get('type');
+                    const viewParam = params.get('view');
+                    const hasTranslate = params.get('translate') === 'true';
+                    const pinsParam = params.get('pins');
 
-                            // " 로 감싸진 부분만 추출
-                            const nameMatches = [...nameSegment.matchAll(/"([^"]+)"/g)];
-                            nameMatches.forEach(m => currentSkillNames.add(m[1]));
+                    // type, view 검사
+                    if (typeParam !== 'summary') {
+                        params.set('type', 'summary');
+                        shouldRedirect = true;
+                    }
+                    if (viewParam !== 'events') {
+                        params.set('view', 'events');
+                        shouldRedirect = true;
+                    }
+                    // translate 검사
+                    if (translatePage && !hasTranslate) {
+                        params.set('translate', 'true');
+                        shouldRedirect = true;
+                    }
+
+                    let currentSkillNames = new Set();
+                    let trackedSkillNames = new Set();
+                    let currentSkillIds = new Set();
+                    let trackedSkillIds = new Set();
+                    // 스킬 검사
+                    if (pinsParam) {
+                        try {
+                            const decoded = decodeURIComponent(pinsParam);
+
+                            // ability.name IN (...)
+                            const nameIndex = decoded.search(/ability\.name\s+IN\s*\(/i);
+                            if (nameIndex !== -1) {
+                                const idIndex = decoded.search(/ability\.id\s+IN\s*\(/i);
+                                const nameSegment = idIndex !== -1
+                                    ? decoded.slice(nameIndex, idIndex)
+                                    : decoded.slice(nameIndex);
+
+                                const nameMatches = [...nameSegment.matchAll(/"([^"]+)"/g)];
+                                nameMatches.forEach(m => currentSkillNames.add(m[1]));
+                            }
+
+                            // ability.id IN (...)
+                            const idInMatch = decoded.match(/ability\.id\s+IN\s*\(([^)]*)\)/i);
+                            if (idInMatch) {
+                                const idListStr = idInMatch[1];
+                                const ids = (idListStr.match(/\d+/g) || []);
+                                ids.forEach(id => currentSkillIds.add(id));
+                            }
+                        } catch (e) {
+                            console.error('pins 파싱 중 오류', e);
                         }
+                    }
 
-                        // --------------------------
-                        // ability.id IN (...)
-                        // --------------------------
-                        const idInMatch = decoded.match(/ability\.id\s+IN\s*\(([^)]*)\)/i);
-                        if (idInMatch) {
-                            const idListStr = idInMatch[1]; // "123, 456, ..."
-                            const ids = (idListStr.match(/\d+/g) || []);
-                            ids.forEach(id => currentSkillIds.add(id));
+                    trackedSkills.forEach(m => {
+                        if (m.extractBySpellId) {
+                            trackedSkillIds.add(String(m.id));
+                        }else {
+                            trackedSkillNames.add(m.en);
+                            if(!translatePage)
+                                trackedSkillNames.add(m.ko);
                         }
-                    } catch (e) {
-                        console.error('pins 파싱 중 오류', e);
-                    }
-                }
+                    })
 
-                trackedSkills.forEach(m => {
-                    if (m.extractBySpellId) {
-                        trackedSkillIds.add(String(m.id));
-                    }else {
-                        trackedSkillNames.add(m.en);
-                        trackedSkillNames.add(m.ko);
-                    }
-                })
+                    const trackedNamesArr = Array.from(trackedSkillNames);
+                    const currentNamesArr = Array.from(currentSkillNames);
+                    const trackedIdsArr   = Array.from(trackedSkillIds);
+                    const currentIdsArr   = Array.from(currentSkillIds);
 
-                const trackedNamesArr = Array.from(trackedSkillNames);
-                const currentNamesArr = Array.from(currentSkillNames);
-                const trackedIdsArr   = Array.from(trackedSkillIds);
-                const currentIdsArr   = Array.from(currentSkillIds);
+                    const namesEqual = trackedNamesArr.length === currentNamesArr.length &&
+                        trackedNamesArr.every(name => currentNamesArr.includes(name));
+                    const idsEqual   = trackedIdsArr.length === currentIdsArr.length &&
+                        trackedIdsArr.every(id => currentIdsArr.includes(id));
+                    const isSame = namesEqual && idsEqual;
 
-
-                console.log(trackedNamesArr)
-                console.log(currentNamesArr)
-
-                const namesEqual = trackedNamesArr.length === currentNamesArr.length &&
-                    trackedNamesArr.every(name => currentNamesArr.includes(name));
-                const idsEqual   = trackedIdsArr.length === currentIdsArr.length &&
-                    trackedIdsArr.every(id => currentIdsArr.includes(id));
-                const isSame = namesEqual && idsEqual;
-
-                if (!isSame) {
-                    // 새로운 pins 파라미터 생성
-                    const parts = [];
-                    if (trackedSkillNames.size > 0) {
-                        const nameClause = [...trackedSkillNames]
-                            .map(name => `"${name.replace(/"/g, '\\"')}"`)
-                        .join(', ');
-                        parts.push(`ability.name IN (${nameClause})`);
+                    if (!isSame) {
+                        // 새로운 pins 파라미터 생성
+                        const parts = [];
+                        if (trackedSkillNames.size > 0) {
+                            const nameClause = [...trackedSkillNames]
+                                .map(name => `"${name.replace(/"/g, '\\"')}"`)
+                                .join(', ');
+                            parts.push(`ability.name IN (${nameClause})`);
                         }
-                    if (trackedSkillIds.size > 0) {
-                        // 숫자 목록, 따옴표 없음
-                        const idClause = [...trackedSkillIds].join(', ');
-                        parts.push(`ability.id IN (${idClause})`);
+                        if (trackedSkillIds.size > 0) {
+                            const idClause = [...trackedSkillIds].join(', ');
+                            parts.push(`ability.id IN (${idClause})`);
+                        }
+                        let expr = parts.join(' OR ');
+                        if (expr) {
+                            expr = `type="cast" AND (${expr})`;
+                        } else {
+                            expr = `type="cast"`;
+                        }
+                        const pinsString = `2$Off$#244F4B$expression$${expr}`;
+                        const encodedPins = pinsString;
+                        params.set('pins', encodedPins);
+                        shouldRedirect = true;
                     }
-                    let expr = parts.join(' OR ');
-                    if (expr) {
-                        expr = `type="cast" AND (${expr})`;
-                    } else {
-                        expr = `type="cast"`; // 스킬 조건이 없더라도 cast만 필터링
-                    }
-                    const pinsString = `2$Off$#244F4B$expression$${expr}`;
-                    //console.log(pinsString)
-                    const encodedPins = pinsString;
-                    params.set('pins', encodedPins);
-                    shouldRedirect = true;
-                }
 
-
-
-                if (shouldRedirect) {
-                    const newUrl = `${url.origin}${url.pathname}?${params.toString()}`;
-                    status.textContent = '🔁 필요한 파라미터를 추가하고 다시 이동합니다...';
-                    status.style.background = 'rgba(255, 193, 7, 0.3)';
-                    toggleTrackBtn(false);
-
-
-                    chrome.tabs.update(currentTab.id, { url: newUrl }, function (updatedTab) {
-                        status.textContent = '🔄 페이지 이동 중...';
+                    if (shouldRedirect) {
+                        const newUrl = `${url.origin}${url.pathname}?${params.toString()}`;
+                        status.textContent = t('status_adding_params');
                         status.style.background = 'rgba(255, 193, 7, 0.3)';
                         toggleTrackBtn(false);
 
-                        waitForPageLoad(updatedTab.id, (loaded) => {
-                            if (loaded) {
-                                status.textContent = '✅ 페이지 로드 완료. 분석 준비 완료';
-                                status.style.background = 'rgba(40, 167, 69, 0.3)';
-                                toggleTrackBtn(true);
-                                // trackBtn.click(); // 자동 분석 시작 원할 경우
-                            } else {
-                                status.textContent = '⚠️ 페이지 로딩이 실패 했습니다';
-                                status.style.background = 'rgba(220, 53, 69, 0.3)';
-                                toggleTrackBtn(false);
-                            }
+                        chrome.tabs.update(currentTab.id, { url: newUrl }, function (updatedTab) {
+                            status.textContent = t('status_redirecting');
+                            status.style.background = 'rgba(255, 193, 7, 0.3)';
+                            toggleTrackBtn(false);
+
+                            waitForPageLoad(updatedTab.id, (loaded) => {
+                                if (loaded) {
+                                    status.textContent = t('status_page_loaded');
+                                    status.style.background = 'rgba(40, 167, 69, 0.3)';
+                                    toggleTrackBtn(true);
+                                } else {
+                                    status.textContent = t('status_page_load_failed');
+                                    status.style.background = 'rgba(220, 53, 69, 0.3)';
+                                    toggleTrackBtn(false);
+                                }
+                            });
                         });
-                    });
-                } else {
-                    status.textContent = '✅ 분석 준비 완료';
-                    status.style.background = 'rgba(40, 167, 69, 0.3)';
-                    toggleTrackBtn(true);
-                }
-            });
-        } catch (e) {
-            status.textContent = '❌ URL 분석 중 오류 발생';
-            status.style.background = 'rgba(220, 53, 69, 0.3)';
-            toggleTrackBtn(false);
-        }
-    });
-
-    function runExtraction({ useOriginalName }) {
-        return new Promise((resolve, reject) => {
-            chrome.storage.local.get(['exportOptions'], function (data) {
-                const opts = data.exportOptions || {};
-                const trackingOpts = {
-                    options: {
-                        tipTheScales: opts.tipTheScales || false,
-                        includeRank: opts.includeRank || false,
-                        appendDisplay: opts.appendDisplay || false
+                    } else {
+                        status.textContent = t('status_ready');
+                        status.style.background = 'rgba(40, 167, 69, 0.3)';
+                        toggleTrackBtn(true);
                     }
-                };
+                });
+            } catch (e) {
+                status.textContent = t('status_url_error');
+                status.style.background = 'rgba(220, 53, 69, 0.3)';
+                toggleTrackBtn(false);
+            }
+        });
 
-                chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
-                    chrome.scripting.executeScript({
-                        target: {tabId: tabs[0].id},
-                        func: async function (trackedSkills, trackingOpts, useOriginalName, playerName) {
-                            function toMinuteSeconds(rawTime) {
-                                const parts = rawTime.split(':');
-                                const minutes = String(parseInt(parts[0])).padStart(2, '0');
-                                const seconds = Math.floor(parseFloat(parts[1]));
-                                return minutes + ':' + String(seconds).padStart(2, '0');
-                            }
+        function runExtraction({ useOriginalName }) {
+            return new Promise((resolve, reject) => {
+                chrome.storage.local.get(['exportOptions'], function (data) {
+                    const opts = data.exportOptions || {};
+                    const trackingOpts = {
+                        options: {
+                            appendDisplay: opts.appendDisplay || false
+                        }
+                    };
 
-                            const entries = [];
-                            await new Promise(resolve => setTimeout(resolve, 2000));
-                            let rows = document.querySelectorAll('tr[id^="event-row"]');
-                            if (rows.length === 0) rows = document.querySelectorAll('tr[class*="event"]');
-                            if (rows.length === 0) rows = document.querySelectorAll('table tr');
-                            if (rows.length === 0) return [];
-
-                            let tipTheScalesActive = false;
-
-                            for (let i = 0; i < rows.length; i++) {
-                                const row = rows[i];
-                                const timeCell = row.querySelector('.main-table-number');
-                                const eventCell = row.querySelector('.event-description-cell');
-                                if (!timeCell || !eventCell) continue;
-
-                                const rawTime = timeCell.textContent.trim();
-                                const time = toMinuteSeconds(rawTime);
-                                const cleanText = eventCell.textContent.replace(/\s+/g, '').toLowerCase();
-
-                                if (cleanText.includes('caststipthescales')) {
-                                    tipTheScalesActive = true;
-                                    continue;
+                    chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
+                        chrome.scripting.executeScript({
+                            target: {tabId: tabs[0].id},
+                            func: async function (trackedSkills, trackingOpts, useOriginalName, playerName) {
+                                function toMinuteSeconds(rawTime) {
+                                    const parts = rawTime.split(':');
+                                    const minutes = String(parseInt(parts[0])).padStart(2, '0');
+                                    const seconds = Math.floor(parseFloat(parts[1]));
+                                    return minutes + ':' + String(seconds).padStart(2, '0');
                                 }
 
-                                for (const skill of trackedSkills) {
-                                    let Skill_En = skill.en.replace(/\s+/g, '').toLowerCase().trim();
-                                    let Skill_Ko = skill.ko.replace(/\s+/g, '').trim();
+                                const entries = [];
+                                await new Promise(resolve => setTimeout(resolve, 2000));
+                                let rows = document.querySelectorAll('tr[id^="event-row"]');
+                                if (rows.length === 0) rows = document.querySelectorAll('tr[class*="event"]');
+                                if (rows.length === 0) rows = document.querySelectorAll('table tr');
+                                if (rows.length === 0) return [];
 
-                                    if (
-                                        cleanText.includes('casts' + Skill_En) ||
-                                        cleanText.includes('casts' + Skill_Ko)
-                                    ) {
-                                        let result;
-                                        const tipMatch = (
-                                            Skill_En === 'firebreath' || Skill_En === 'eternitysurge' ||
-                                            Skill_Ko === '불의숨결' || Skill_Ko === '영원의쇄도'
-                                        );
+                                for (let i = 0; i < rows.length; i++) {
+                                    const row = rows[i];
+                                    const timeCell = row.querySelector('.main-table-number');
+                                    const eventCell = row.querySelector('.event-description-cell');
+                                    if (!timeCell || !eventCell) continue;
 
-                                        // ✅ 캐릭터명 결정 로직
-                                        let targetName = useOriginalName
-                                            ? cleanText.split("casts")[0]
-                                            : playerName;
+                                    const rawTime = timeCell.textContent.trim();
+                                    const time = toMinuteSeconds(rawTime);
+                                    const cleanText = eventCell.textContent.replace(/\s+/g, '').toLowerCase();
 
-                                        if (tipTheScalesActive && tipMatch && trackingOpts.options.tipTheScales) {
-                                            result = `{time:${time}} - ${targetName} {spell:${skill.id}} - tip the scales`;
-                                            tipTheScalesActive = false;
-                                        } else {
-                                            let level = 'N/A';
-                                            for (let j = i + 1; j < Math.min(i + 10, rows.length); j++) {
-                                                const nextEvent = rows[j].querySelector('.event-description-cell');
-                                                if (!nextEvent) continue;
-                                                const nextText = nextEvent.textContent.replace(/\s+/g, '').toLowerCase();
-                                                if (
-                                                    nextText.includes('releases' + Skill_En + 'atempowermentlevel') ||
-                                                    nextText.includes('releases' + Skill_Ko + 'atempowermentlevel')
-                                                ) {
-                                                    const match = nextText.match(/level(\d+)/);
-                                                    if (match) level = match[1];
-                                                    break;
-                                                }
-                                            }
-                                            result = level === 'N/A' || !trackingOpts.options.includeRank
-                                                ? `{time:${time}} - ${targetName} {spell:${skill.id}}`
-                                                : `{time:${time}} - ${targetName} {spell:${skill.id}} - level ${level}`;
+                                    for (const skill of trackedSkills) {
+                                        let Skill_En = skill.en.replace(/\s+/g, '').toLowerCase().trim();
+                                        let Skill_Ko = skill.ko.replace(/\s+/g, '').trim();
+
+                                        if (
+                                            cleanText.includes('casts' + Skill_En) ||
+                                            cleanText.includes('casts' + Skill_Ko)
+                                        ) {
+                                            let result;
+
+                                            let targetName = useOriginalName
+                                                ? cleanText.split("casts")[0]
+                                                : playerName;
+
+                                            result = `{time:${time}} - ${targetName} {spell:${skill.id}}`;
 
                                             result = trackingOpts.options.appendDisplay
                                                 ? result.concat(` - ${skill.display}`)
                                                 : result;
-                                        }
 
-                                        entries.push(result);
-                                        break;
+                                            entries.push(result);
+                                            break;
+                                        }
                                     }
                                 }
-                            }
-                            return entries;
-                        },
-                        args: [trackedSkills, trackingOpts, useOriginalName, document.getElementById('playerName')?.value || '']
-                    }).then(res => {
-                        resolve(res && res[0] ? res[0].result : []);
-                    }).catch(reject);
+                                return entries;
+                            },
+                            args: [trackedSkills, trackingOpts, useOriginalName, document.getElementById('playerName')?.value || '']
+                        }).then(res => {
+                            resolve(res && res[0] ? res[0].result : []);
+                        }).catch(reject);
+                    });
                 });
             });
-        });
-    }
-
-
-
-    trackBtn.addEventListener('click', function () {
-        toggleTrackBtn(false);
-        trackBtn.textContent = '분석 중...';
-        status.textContent = '🔄 로그 분석 중...';
-        status.className = 'status loading';
-
-        runExtraction({ useOriginalName: false })
-            .then(skillEvents => {
-                toggleTrackBtn(true);
-                trackBtn.textContent = '스킬 추적';
-                currentResults = skillEvents;
-                if (!skillEvents || skillEvents.length === 0) {
-                    status.textContent = '⚠️ 추적 가능한 스킬이 없습니다';
-                    return;
-                }
-                status.textContent = `✅ ${skillEvents.length}개의 스킬 이벤트 발견`;
-                displayResults(skillEvents);
-            })
-            .catch(err => {
-                console.error(err);
-                toggleTrackBtn(true);
-                trackBtn.textContent = '스킬 추적';
-                status.textContent = '❌ 오류 발생';
-            });
-    });
-
-    rawTrackBtn.addEventListener('click', function () {
-        toggleTrackBtn(false);
-        rawTrackBtn.textContent = '분석 중...';
-        status.textContent = '🔄 원본 로그 분석 중...';
-        status.className = 'status loading';
-
-        runExtraction({ useOriginalName: true })
-            .then(skillEvents => {
-                toggleTrackBtn(true);
-                rawTrackBtn.textContent = '원본 추출';
-                currentResults = skillEvents;
-                if (!skillEvents || skillEvents.length === 0) {
-                    status.textContent = '⚠️ 추적 가능한 원본 스킬이 없습니다';
-                    return;
-                }
-                status.textContent = `✅ ${skillEvents.length}개의 원본 스킬 이벤트 발견`;
-                displayResults(skillEvents);
-            })
-            .catch(err => {
-                console.error(err);
-                toggleTrackBtn(true);
-                rawTrackBtn.textContent = '원본 추출';
-                status.textContent = '❌ 오류 발생';
-            });
-    });
-
-    clearBtn.addEventListener('click', function () {
-        results.classList.add('hidden');
-        copyBtn.classList.add('hidden');
-        resultsList.innerHTML = '';
-        currentResults = [];
-        status.textContent = '결과가 지워졌습니다';
-        status.className = 'status';
-    });
-
-    copyBtn.addEventListener('click', function () {
-        console.log(currentResults);
-        if (currentResults.length === 0) return;
-        const textToCopy = currentResults.join('\n');
-        navigator.clipboard.writeText(textToCopy).then(function () {
-            copyBtn.textContent = '복사됨!';
-            setTimeout(() => copyBtn.textContent = '결과 복사', 1000);
-        }).catch(function () {
-            const textArea = document.createElement('textarea');
-            textArea.value = textToCopy;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-            copyBtn.textContent = '복사됨!';
-            setTimeout(() => copyBtn.textContent = '결과 복사', 1000);
-        });
-    });
-
-    settingsBtn.addEventListener('click', function () {
-        chrome.runtime.openOptionsPage();
-    });
-
-    function displayResults(skillEvents) {
-        resultsList.innerHTML = '';
-        skillEvents.forEach(event => {
-            const item = document.createElement('div');
-            item.className = 'result-item';
-            item.textContent = event;
-            resultsList.appendChild(item);
-        });
-        results.classList.remove('hidden');
-        copyBtn.classList.remove('hidden');
-    }
-
-
-    // 1 == on // 2 == off
-    function toggleTrackBtn(toggle) {
-        if(toggle == true) {
-            rawTrackBtn.disabled = false;
-            trackBtn.disabled = false;
-        }else{
-            rawTrackBtn.disabled = true;
-            trackBtn.disabled = true;
         }
+
+        trackBtn.addEventListener('click', function () {
+            toggleTrackBtn(false);
+            trackBtn.textContent = t('btn_analyzing');
+            status.textContent = t('status_analyzing');
+            status.className = 'status loading';
+
+            runExtraction({ useOriginalName: false })
+                .then(skillEvents => {
+                    toggleTrackBtn(true);
+                    trackBtn.textContent = t('btn_extract_skills');
+                    currentResults = skillEvents;
+                    if (!skillEvents || skillEvents.length === 0) {
+                        status.textContent = t('status_no_skills_found');
+                        return;
+                    }
+                    status.textContent = t('status_skills_found', [skillEvents.length]);
+                    displayResults(skillEvents);
+                })
+                .catch(err => {
+                    console.error(err);
+                    toggleTrackBtn(true);
+                    trackBtn.textContent = t('btn_extract_skills');
+                    status.textContent = t('status_error');
+                });
+        });
+
+        rawTrackBtn.addEventListener('click', function () {
+            toggleTrackBtn(false);
+            rawTrackBtn.textContent = t('btn_analyzing');
+            status.textContent = t('status_analyzing_raw');
+            status.className = 'status loading';
+
+            runExtraction({ useOriginalName: true })
+                .then(skillEvents => {
+                    toggleTrackBtn(true);
+                    rawTrackBtn.textContent = t('btn_extract_raw');
+                    currentResults = skillEvents;
+                    if (!skillEvents || skillEvents.length === 0) {
+                        status.textContent = t('status_no_raw_skills_found');
+                        return;
+                    }
+                    status.textContent = t('status_raw_skills_found', [skillEvents.length]);
+                    displayResults(skillEvents);
+                })
+                .catch(err => {
+                    console.error(err);
+                    toggleTrackBtn(true);
+                    rawTrackBtn.textContent = t('btn_extract_raw');
+                    status.textContent = t('status_error');
+                });
+        });
+
+        clearBtn.addEventListener('click', function () {
+            results.classList.add('hidden');
+            copyBtn.classList.add('hidden');
+            resultsList.innerHTML = '';
+            currentResults = [];
+            status.textContent = t('status_results_cleared');
+            status.className = 'status';
+        });
+
+        copyBtn.addEventListener('click', function () {
+            console.log(currentResults);
+            if (currentResults.length === 0) return;
+            const textToCopy = currentResults.join('\n');
+            navigator.clipboard.writeText(textToCopy).then(function () {
+                copyBtn.textContent = t('btn_copied');
+                setTimeout(() => copyBtn.textContent = t('btn_copy_results'), 1000);
+            }).catch(function () {
+                const textArea = document.createElement('textarea');
+                textArea.value = textToCopy;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                copyBtn.textContent = t('btn_copied');
+                setTimeout(() => copyBtn.textContent = t('btn_copy_results'), 1000);
+            });
+        });
+
+        settingsBtn.addEventListener('click', function () {
+            chrome.runtime.openOptionsPage();
+        });
+
+        function displayResults(skillEvents) {
+            resultsList.innerHTML = '';
+            skillEvents.forEach(event => {
+                const item = document.createElement('div');
+                item.className = 'result-item';
+                item.textContent = event;
+                resultsList.appendChild(item);
+            });
+            results.classList.remove('hidden');
+            copyBtn.classList.remove('hidden');
+        }
+
+        // 1 == on // 2 == off
+        function toggleTrackBtn(toggle) {
+            if(toggle == true) {
+                rawTrackBtn.disabled = false;
+                trackBtn.disabled = false;
+            }else{
+                rawTrackBtn.disabled = true;
+                trackBtn.disabled = true;
+            }
+        }
+    };
+
+    // i18n 초기화를 기다린 후 실행
+    if (window.i18n && window.i18n.messages) {
+        initializeAfterI18n();
+    } else {
+        // i18n이 아직 로드되지 않은 경우 잠시 기다림
+        setTimeout(() => {
+            initializeAfterI18n();
+        }, 100);
     }
 });

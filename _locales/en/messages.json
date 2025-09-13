@@ -1,0 +1,353 @@
+{
+  "app_title": {
+    "message": "🔥 Skill Tracker"
+  },
+  "status_use_on_warcraft_logs": {
+    "message": "Use on Warcraft Logs page"
+  },
+  "status_invalid_path": {
+    "message": "❌ Invalid path: Please navigate to the page you want to extract."
+  },
+  "status_no_fight": {
+    "message": "❌ Analysis failed: Please select the fight you want to extract."
+  },
+  "status_no_source": {
+    "message": "❌ Analysis failed: Please select the user you want to extract."
+  },
+  "status_adding_params": {
+    "message": "🔍 Adding required parameters and redirecting..."
+  },
+  "status_redirecting": {
+    "message": "🔄 Redirecting page..."
+  },
+  "status_page_loaded": {
+    "message": "✅ Page load complete. Analysis ready"
+  },
+  "status_page_load_failed": {
+    "message": "⚠️ Page loading failed"
+  },
+  "status_ready": {
+    "message": "✅ Analysis ready"
+  },
+  "status_url_error": {
+    "message": "❌ Error occurred during URL analysis"
+  },
+  "status_analyzing": {
+    "message": "🔄 Analyzing logs..."
+  },
+  "status_analyzing_raw": {
+    "message": "🔄 Analyzing raw logs..."
+  },
+  "status_no_skills_found": {
+    "message": "⚠️ No trackable skills found"
+  },
+  "status_no_raw_skills_found": {
+    "message": "⚠️ No trackable raw skills found"
+  },
+  "status_skills_found": {
+    "message": "✅ Found $1 skill events"
+  },
+  "status_raw_skills_found": {
+    "message": "✅ Found $1 raw skill events"
+  },
+  "status_error": {
+    "message": "❌ Error occurred"
+  },
+  "status_results_cleared": {
+    "message": "Results cleared"
+  },
+  "label_player_name": {
+    "message": "Player Name:"
+  },
+  "placeholder_player_name": {
+    "message": "Enter player name"
+  },
+  "btn_extract_skills": {
+    "message": "Extract Skills"
+  },
+  "btn_extract_raw": {
+    "message": "Extract Raw"
+  },
+  "btn_clear_results": {
+    "message": "Clear Results"
+  },
+  "btn_settings": {
+    "message": "Settings"
+  },
+  "btn_copy_results": {
+    "message": "Copy Results"
+  },
+  "btn_analyzing": {
+    "message": "Analyzing..."
+  },
+  "btn_copied": {
+    "message": "Copied!"
+  },
+  "language_korean": {
+    "message": "한국어"
+  },
+  "language_english": {
+    "message": "English"
+  },
+  "language_settings": {
+    "message": "Language Settings"
+  },
+  "save_settings": {
+    "message": "Save Settings"
+  },
+  "settings_saved": {
+    "message": "Settings saved successfully!"
+  },
+  "nav_skill_extract": {
+    "message": "🎯 Skill Extract"
+  },
+  "nav_mrt_manage": {
+    "message": "🔍 MRT Text Management"
+  },
+  "editing_mode": {
+    "message": "Edit Mode:"
+  },
+  "editing_skill": {
+    "message": "skill is being edited."
+  },
+  "select_class": {
+    "message": "Select a class"
+  },
+  "class_warrior": {
+    "message": "Warrior (WARRIOR)"
+  },
+  "class_paladin": {
+    "message": "Paladin (PALADIN)"
+  },
+  "class_dk": {
+    "message": "Death Knight (DEATH KNIGHT)"
+  },
+  "class_monk": {
+    "message": "Monk (MONK)"
+  },
+  "class_dh": {
+    "message": "Demon Hunter (DEMON HUNTER)"
+  },
+  "class_druid": {
+    "message": "Druid (DRUID)"
+  },
+  "class_rogue": {
+    "message": "Rogue (ROGUE)"
+  },
+  "class_hunter": {
+    "message": "Hunter (HUNTER)"
+  },
+  "class_mage": {
+    "message": "Mage (MAGE)"
+  },
+  "class_warlock": {
+    "message": "Warlock (WARLOCK)"
+  },
+  "class_priest": {
+    "message": "Priest (PRIEST)"
+  },
+  "class_shaman": {
+    "message": "Shaman (SHAMAN)"
+  },
+  "class_evoker": {
+    "message": "Evoker (EVOKER)"
+  },
+  "placeholder_display_name": {
+    "message": "Display Name (ex: Fire Breath)"
+  },
+  "placeholder_spell_id": {
+    "message": "Spell ID (ex: 357208)"
+  },
+  "placeholder_english_name": {
+    "message": "English Name (ex: fire breath)"
+  },
+  "placeholder_korean_name": {
+    "message": "Korean Name (ex: 불의 숨결)"
+  },
+  "btn_add": {
+    "message": "Add"
+  },
+  "btn_cancel_edit": {
+    "message": "Cancel Edit"
+  },
+  "label_export_class": {
+    "message": "📌 Select class to export:"
+  },
+  "option_all": {
+    "message": "All"
+  },
+  "btn_export_list": {
+    "message": "📤 Export List"
+  },
+  "btn_import_list": {
+    "message": "📥 Import List"
+  },
+  "btn_execute": {
+    "message": "Execute"
+  },
+  "section_extract_options": {
+    "message": "Extract Options"
+  },
+  "option_translate": {
+    "message": "Translate auto-apply (Warcraft Logs Translate option, use for Chinese logs)"
+  },
+  "option_append_display": {
+    "message": "Add DisplayName to extract results"
+  },
+  "empty_skills": {
+    "message": "No registered skills."
+  },
+  "skill_count": {
+    "message": "$1 skills"
+  },
+  "btn_toggle_all": {
+    "message": "All"
+  },
+  "col_name_display": {
+    "message": "Name(Display)"
+  },
+  "col_id": {
+    "message": "ID"
+  },
+  "col_english": {
+    "message": "English Name"
+  },
+  "col_korean": {
+    "message": "Korean Name"
+  },
+  "col_spell_id_extract": {
+    "message": "Extract by Spell ID"
+  },
+  "col_actions": {
+    "message": "Actions"
+  },
+  "btn_edit": {
+    "message": "Edit"
+  },
+  "btn_delete": {
+    "message": "Delete"
+  },
+  "btn_edit_complete": {
+    "message": "Edit Complete"
+  },
+  "confirm_delete": {
+    "message": "Are you sure you want to delete this skill?"
+  },
+  "alert_select_class": {
+    "message": "Please select a class."
+  },
+  "alert_spell_id_required": {
+    "message": "Spell ID is required."
+  },
+  "alert_spell_id_numeric": {
+    "message": "Spell ID must be numeric only."
+  },
+  "alert_name_required": {
+    "message": "Either English name or Korean name must be entered."
+  },
+  "confirm_duplicate_id": {
+    "message": "The same Spell ID already exists. Do you want to overwrite it?"
+  },
+  "placeholder_export": {
+    "message": "📤 Current saved skill list will be displayed here."
+  },
+  "placeholder_import": {
+    "message": "📥 Paste the exported skill list here."
+  },
+  "alert_clipboard_copied": {
+    "message": "📋 Skill list copied to clipboard."
+  },
+  "alert_no_input": {
+    "message": "No input text."
+  },
+  "alert_invalid_id": {
+    "message": "\"$1\" is not a number."
+  },
+  "alert_invalid_skill": {
+    "message": "Item ID(\"$1\") class value is invalid or required fields are missing."
+  },
+  "alert_import_success": {
+    "message": "✅ Skill list successfully added."
+  },
+  "confirm_overwrite": {
+    "message": "Some IDs already exist. Do you want to overwrite them?"
+  },
+  "alert_new_skills_only": {
+    "message": "✅ Only new skills excluding duplicates have been added."
+  },
+  "error_prefix": {
+    "message": "❌ Error: $1"
+  },
+  "mrt_input_title": {
+    "message": "📝 MRT Text Input"
+  },
+  "mrt_input_placeholder": {
+    "message": "Paste your MRT text here"
+  },
+  "btn_analyze": {
+    "message": "🔍 Analyze MRT Text"
+  },
+  "btn_sort_time": {
+    "message": "⏰ Sort by Time"
+  },
+  "btn_clear_input": {
+    "message": "🗑️ Clear Input"
+  },
+  "mrt_users_title": {
+    "message": "👥 Discovered User IDs"
+  },
+  "btn_select_all": {
+    "message": "Select All"
+  },
+  "btn_select_none": {
+    "message": "Select None"
+  },
+  "btn_extract_selected": {
+    "message": "📤 Extract Selected Users"
+  },
+  "mrt_results_title": {
+    "message": "📋 Extraction Results"
+  },
+  "copy_notification": {
+    "message": "✅ Results copied to clipboard!"
+  },
+  "mrt_stats_total_lines": {
+    "message": "Total lines: $1"
+  },
+  "mrt_stats_identified_lines": {
+    "message": "User identified lines: $1"
+  },
+  "mrt_stats_discovered_users": {
+    "message": "Discovered users: $1"
+  },
+  "mrt_stats_selected_users": {
+    "message": "Selected users: $1"
+  },
+  "mrt_stats_extracted_lines": {
+    "message": "Extracted lines: $1"
+  },
+  "mrt_stats_user_lines": {
+    "message": "Lines per user: $1"
+  },
+  "mrt_no_users_found": {
+    "message": "No user IDs found."
+  },
+  "mrt_alert_input_required": {
+    "message": "Please enter MRT text to sort."
+  },
+  "mrt_alert_select_users": {
+    "message": "Please select users to extract."
+  },
+  "mrt_alert_analyze_required": {
+    "message": "Please enter MRT text to analyze."
+  },
+  "mrt_sort_complete": {
+    "message": "Time sorting complete!\n- Lines with time info: $1\n- Lines without time info: $2"
+  },
+  "mrt_user_count_suffix": {
+    "message": " times"
+  },
+  "mrt_replace_placeholder": {
+    "message": "New ID to replace with"
+  }
+}

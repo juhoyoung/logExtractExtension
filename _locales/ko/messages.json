@@ -1,0 +1,353 @@
+{
+  "app_title": {
+    "message": "🔥 Skill Tracker"
+  },
+  "status_use_on_warcraft_logs": {
+    "message": "Warcraft Logs 페이지에서 사용하세요"
+  },
+  "status_invalid_path": {
+    "message": "❌ 잘못된 경로 입니다: 추출 하고 싶은 페이지로 이동하세요."
+  },
+  "status_no_fight": {
+    "message": "❌ 분석 실패: 추출 하고 싶은 전투를 선택 해주세요."
+  },
+  "status_no_source": {
+    "message": "❌ 분석 실패: 추출 하고 싶은 유저를 선택해주세요."
+  },
+  "status_adding_params": {
+    "message": "🔍 필요한 파라미터를 추가하고 다시 이동합니다..."
+  },
+  "status_redirecting": {
+    "message": "🔄 페이지 이동 중..."
+  },
+  "status_page_loaded": {
+    "message": "✅ 페이지 로드 완료. 분석 준비 완료"
+  },
+  "status_page_load_failed": {
+    "message": "⚠️ 페이지 로딩이 실패 했습니다"
+  },
+  "status_ready": {
+    "message": "✅ 분석 준비 완료"
+  },
+  "status_url_error": {
+    "message": "❌ URL 분석 중 오류 발생"
+  },
+  "status_analyzing": {
+    "message": "🔄 로그 분석 중..."
+  },
+  "status_analyzing_raw": {
+    "message": "🔄 원본 로그 분석 중..."
+  },
+  "status_no_skills_found": {
+    "message": "⚠️ 추적 가능한 스킬이 없습니다"
+  },
+  "status_no_raw_skills_found": {
+    "message": "⚠️ 추적 가능한 원본 스킬이 없습니다"
+  },
+  "status_skills_found": {
+    "message": "✅ $1개의 스킬 이벤트 발견"
+  },
+  "status_raw_skills_found": {
+    "message": "✅ $1개의 원본 스킬 이벤트 발견"
+  },
+  "status_error": {
+    "message": "❌ 오류 발생"
+  },
+  "status_results_cleared": {
+    "message": "결과가 지워졌습니다"
+  },
+  "label_player_name": {
+    "message": "플레이어 이름:"
+  },
+  "placeholder_player_name": {
+    "message": "아이디를 입력해주세요"
+  },
+  "btn_extract_skills": {
+    "message": "스킬 추출"
+  },
+  "btn_extract_raw": {
+    "message": "원본 추출"
+  },
+  "btn_clear_results": {
+    "message": "결과 지우기"
+  },
+  "btn_settings": {
+    "message": "설정"
+  },
+  "btn_copy_results": {
+    "message": "결과 복사"
+  },
+  "btn_analyzing": {
+    "message": "분석 중..."
+  },
+  "btn_copied": {
+    "message": "복사됨!"
+  },
+  "language_korean": {
+    "message": "한국어"
+  },
+  "language_english": {
+    "message": "English"
+  },
+  "language_settings": {
+    "message": "언어 설정"
+  },
+  "save_settings": {
+    "message": "설정 저장"
+  },
+  "settings_saved": {
+    "message": "설정이 저장되었습니다!"
+  },
+  "nav_skill_extract": {
+    "message": "🎯 스킬 추출"
+  },
+  "nav_mrt_manage": {
+    "message": "🔍 MRT 텍스트 관리"
+  },
+  "editing_mode": {
+    "message": "수정 모드:"
+  },
+  "editing_skill": {
+    "message": "스킬을 수정하고 있습니다."
+  },
+  "select_class": {
+    "message": "직업을 선택하세요"
+  },
+  "class_warrior": {
+    "message": "전사 (WARRIOR)"
+  },
+  "class_paladin": {
+    "message": "성기사 (PALADIN)"
+  },
+  "class_dk": {
+    "message": "죽음의 기사 (DEATH KNIGHT)"
+  },
+  "class_monk": {
+    "message": "수도사 (MONK)"
+  },
+  "class_dh": {
+    "message": "악마사냥꾼 (DEMON HUNTER)"
+  },
+  "class_druid": {
+    "message": "드루이드 (DRUID)"
+  },
+  "class_rogue": {
+    "message": "도적 (ROGUE)"
+  },
+  "class_hunter": {
+    "message": "사냥꾼 (HUNTER)"
+  },
+  "class_mage": {
+    "message": "마법사 (MAGE)"
+  },
+  "class_warlock": {
+    "message": "흑마법사 (WARLOCK)"
+  },
+  "class_priest": {
+    "message": "사제 (PRIEST)"
+  },
+  "class_shaman": {
+    "message": "주술사 (SHAMAN)"
+  },
+  "class_evoker": {
+    "message": "기원사 (EVOKER)"
+  },
+  "placeholder_display_name": {
+    "message": "Display Name (ex: 불숨)"
+  },
+  "placeholder_spell_id": {
+    "message": "Spell ID (ex: 357208)"
+  },
+  "placeholder_english_name": {
+    "message": "English Name (ex: fire breath)"
+  },
+  "placeholder_korean_name": {
+    "message": "Korean Name (ex: 불의 숨결)"
+  },
+  "btn_add": {
+    "message": "추가"
+  },
+  "btn_cancel_edit": {
+    "message": "수정 취소"
+  },
+  "label_export_class": {
+    "message": "📌 추출할 직업 선택:"
+  },
+  "option_all": {
+    "message": "전체"
+  },
+  "btn_export_list": {
+    "message": "📤 목록 추출"
+  },
+  "btn_import_list": {
+    "message": "📥 목록 입력"
+  },
+  "btn_execute": {
+    "message": "실행"
+  },
+  "section_extract_options": {
+    "message": "추출 옵션"
+  },
+  "option_translate": {
+    "message": "Translate 자동 적용 (로그 사이트의 Translate 옵션, 중국 로그 추출 시 사용)"
+  },
+  "option_append_display": {
+    "message": "추출 결과에 DisplayName 추가"
+  },
+  "empty_skills": {
+    "message": "등록된 스킬이 없습니다."
+  },
+  "skill_count": {
+    "message": "$1개"
+  },
+  "btn_toggle_all": {
+    "message": "전체"
+  },
+  "col_name_display": {
+    "message": "이름(Display)"
+  },
+  "col_id": {
+    "message": "ID"
+  },
+  "col_english": {
+    "message": "영어명"
+  },
+  "col_korean": {
+    "message": "한글명"
+  },
+  "col_spell_id_extract": {
+    "message": "Spell ID 기준 추출"
+  },
+  "col_actions": {
+    "message": "작업"
+  },
+  "btn_edit": {
+    "message": "수정"
+  },
+  "btn_delete": {
+    "message": "삭제"
+  },
+  "btn_edit_complete": {
+    "message": "수정 완료"
+  },
+  "confirm_delete": {
+    "message": "이 스킬을 삭제하시겠습니까?"
+  },
+  "alert_select_class": {
+    "message": "직업을 선택해주세요."
+  },
+  "alert_spell_id_required": {
+    "message": "Spell ID는 필수입니다."
+  },
+  "alert_spell_id_numeric": {
+    "message": "스펠 ID는 숫자만 입력 가능합니다."
+  },
+  "alert_name_required": {
+    "message": "영문명 또는 한글명 중 하나는 반드시 입력해야 합니다."
+  },
+  "confirm_duplicate_id": {
+    "message": "같은 Spell ID가 이미 존재합니다. 덮어쓰시겠습니까?"
+  },
+  "placeholder_export": {
+    "message": "📤 현재 저장된 스킬 목록이 여기에 표시됩니다."
+  },
+  "placeholder_import": {
+    "message": "📥 추출된 스킬 목록을 여기에 붙여 넣으세요."
+  },
+  "alert_clipboard_copied": {
+    "message": "📋 스킬 목록이 클립보드에 복사되었습니다."
+  },
+  "alert_no_input": {
+    "message": "입력된 텍스트가 없습니다."
+  },
+  "alert_invalid_id": {
+    "message": "\"$1\"는 숫자가 아닙니다."
+  },
+  "alert_invalid_skill": {
+    "message": "ID(\"$1\") 항목의 class 값이 유효하지 않거나 필수 필드가 누락되었습니다."
+  },
+  "alert_import_success": {
+    "message": "✅ 스킬 목록이 성공적으로 추가되었습니다."
+  },
+  "confirm_overwrite": {
+    "message": "일부 ID가 이미 존재합니다. 덮어쓰시겠습니까?"
+  },
+  "alert_new_skills_only": {
+    "message": "✅ 중복을 제외한 새 스킬만 추가되었습니다."
+  },
+  "error_prefix": {
+    "message": "❌ 오류: $1"
+  },
+  "mrt_input_title": {
+    "message": "📝 MRT 텍스트 입력"
+  },
+  "mrt_input_placeholder": {
+    "message": "여기에 MRT 텍스트를 붙여넣으세요"
+  },
+  "btn_analyze": {
+    "message": "🔍 MRT 텍스트 분석"
+  },
+  "btn_sort_time": {
+    "message": "⏰ 시간순 정렬"
+  },
+  "btn_clear_input": {
+    "message": "🗑️ 입력 내용 지우기"
+  },
+  "mrt_users_title": {
+    "message": "👥 발견된 유저 아이디"
+  },
+  "btn_select_all": {
+    "message": "전체 선택"
+  },
+  "btn_select_none": {
+    "message": "전체 해제"
+  },
+  "btn_extract_selected": {
+    "message": "📤 선택한 유저 추출"
+  },
+  "mrt_results_title": {
+    "message": "📋 추출 결과"
+  },
+  "copy_notification": {
+    "message": "✅ 결과가 클립보드에 복사되었습니다!"
+  },
+  "mrt_stats_total_lines": {
+    "message": "전체 라인: $1개"
+  },
+  "mrt_stats_identified_lines": {
+    "message": "유저 식별 라인: $1개"
+  },
+  "mrt_stats_discovered_users": {
+    "message": "발견된 유저: $1명"
+  },
+  "mrt_stats_selected_users": {
+    "message": "선택된 유저: $1명"
+  },
+  "mrt_stats_extracted_lines": {
+    "message": "추출된 라인: $1개"
+  },
+  "mrt_stats_user_lines": {
+    "message": "유저별 라인수: $1"
+  },
+  "mrt_no_users_found": {
+    "message": "발견된 유저 아이디가 없습니다."
+  },
+  "mrt_alert_input_required": {
+    "message": "정렬할 MRT 텍스트를 입력해주세요."
+  },
+  "mrt_alert_select_users": {
+    "message": "추출할 유저를 선택해주세요."
+  },
+  "mrt_alert_analyze_required": {
+    "message": "MRT 텍스트를 입력해주세요."
+  },
+  "mrt_sort_complete": {
+    "message": "시간순 정렬 완료!\n- 시간 정보 있는 라인: $1개\n- 시간 정보 없는 라인: $2개"
+  },
+  "mrt_user_count_suffix": {
+    "message": "회"
+  },
+  "mrt_replace_placeholder": {
+    "message": "변경할 아이디"
+  }
+}

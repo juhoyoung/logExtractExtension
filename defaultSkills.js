@@ -147,7 +147,7 @@ export const defaultSkills = {
     "class": "EVOKER",
     "display": "DreamBreath",
     "en": "Dream Breath",
-    "enabled": false,
+    "enabled": true,
     "extractBySpellId": false,
     "ko": "꿈의 숨결"
   },
@@ -167,6 +167,14 @@ export const defaultSkills = {
     "extractBySpellId": false,
     "ko": "영원의 쇄도"
   },
+  "363502": {
+    "class": "EVOKER",
+    "display": "꿈의 비행",
+    "en": "Dream Flight",
+    "enabled": true,
+    "extractBySpellId": false,
+    "ko": "꿈의 비행"
+  },
   "363534": {
     "class": "EVOKER",
     "display": "Rewind",
@@ -174,6 +182,14 @@ export const defaultSkills = {
     "enabled": true,
     "extractBySpellId": false,
     "ko": "되돌리기"
+  },
+  "367230": {
+    "class": "EVOKER",
+    "display": "영혼 만개",
+    "en": "Spiritbloom",
+    "enabled": true,
+    "extractBySpellId": false,
+    "ko": "영혼 만개"
   },
   "370537": {
     "class": "EVOKER",
@@ -252,14 +268,14 @@ export const defaultSkills = {
     "display": "영소",
     "en": "Convoke the Spirits",
     "enabled": true,
-    "extractBySpellId": false,
+    "extractBySpellId": true,
     "ko": "영혼 소집"
   },
   "443028": {
     "class": "MONK",
     "display": "천신합일",
     "en": "Celestial Conduit",
-    "enabled": false,
+    "enabled": true,
     "extractBySpellId": false,
     "ko": "천신합일"
   },

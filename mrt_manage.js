@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', function () {
     let allLines = [];
     let userDataMap = new Map();
@@ -43,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function sortByTime() {
         const inputText = document.getElementById('inputText').value.trim();
         if (!inputText) {
-            alert('정렬할 MRT 텍스트를 입력해주세요.');
+            alert(i18n.getMessage('mrt_alert_input_required'));
             return;
         }
 
@@ -75,10 +74,9 @@ document.addEventListener('DOMContentLoaded', function () {
         // 결과를 입력창에 다시 설정
         document.getElementById('inputText').value = sortedLines.join('\n');
 
-        // 정렬 완료 알림
-        alert(`시간순 정렬 완료!\n- 시간 정보 있는 라인: ${linesWithTime.length}개\n- 시간 정보 없는 라인: ${linesWithoutTime.length}개`);
+        // 정렬 완료 알림 (i18n 적용)
+        alert(i18n.getMessage('mrt_sort_complete', [linesWithTime.length, linesWithoutTime.length]));
     }
-
 
     // 단일 유저 아이디 추출 함수 (첫 번째 유저만)
     function extractUserId(line) {
@@ -147,9 +145,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 텍스트 분석 함수
     function analyzeText() {
+        console.log("asdasdasd")
         const inputText = document.getElementById('inputText').value.trim();
         if (!inputText) {
-            alert('MRT 텍스트를 입력해주세요.');
+            alert(i18n.getMessage('mrt_alert_analyze_required'));
             return;
         }
 
@@ -184,33 +183,34 @@ document.addEventListener('DOMContentLoaded', function () {
         const userStats = document.getElementById('userStats');
 
         if (userDataMap.size === 0) {
-            userGrid.innerHTML = '<div class="empty-state">발견된 유저 아이디가 없습니다.</div>';
+            userGrid.innerHTML = `<div class="empty-state">${i18n.getMessage('mrt_no_users_found')}</div>`;
             userStats.innerHTML = '';
             userSection.style.display = 'block';
             return;
         }
 
-        // 통계
+        // 통계 (i18n 적용)
         const totalLines = allLines.length;
         const linesWithUsers = Array.from(userDataMap.values()).reduce((sum, data) => sum + data.count, 0);
         userStats.innerHTML = `
-        <div class="stat-item">전체 라인: ${totalLines}개</div>
-        <div class="stat-item">유저 식별 라인: ${linesWithUsers}개</div>
-        <div class="stat-item">발견된 유저: ${userDataMap.size}명</div>
-    `;
+            <div class="stat-item">${i18n.getMessage('mrt_stats_total_lines', [totalLines])}</div>
+            <div class="stat-item">${i18n.getMessage('mrt_stats_identified_lines', [linesWithUsers])}</div>
+            <div class="stat-item">${i18n.getMessage('mrt_stats_discovered_users', [userDataMap.size])}</div>
+        `;
 
         const sortedUsers = Array.from(userDataMap.entries()).sort((a, b) => b[1].count - a[1].count);
 
-        // 유저 목록 생성
+        // 유저 목록 생성 (i18n 적용)
         userGrid.innerHTML = sortedUsers.map(([userId, data]) => `
             <div class="user-item" data-user="${userId}">
                 <div class="user-info">
                     <input type="checkbox" id="user_${userId}" data-user="${userId}">
                     <label for="user_${userId}" style="cursor: pointer;">${userId}</label>
-                    <span class="user-count">${data.count}회</span>
+                    <span class="user-count">${data.count}${i18n.getMessage('mrt_user_count_suffix')}</span>
                 </div>
                 <div class="user-replace">
-                    <input type="text" class="replace-input" data-user="${userId}" placeholder="변경할 아이디">
+                    <input type="text" class="replace-input" data-user="${userId}" 
+                           placeholder="${i18n.getMessage('mrt_replace_placeholder')}">
                 </div>
             </div>
         `).join('');
@@ -254,7 +254,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const selectedUsers = Array.from(checkedBoxes).map(cb => cb.dataset.user);
 
         if (selectedUsers.length === 0) {
-            alert('추출할 유저를 선택해주세요.');
+            alert(i18n.getMessage('mrt_alert_select_users'));
             return;
         }
 
@@ -283,7 +283,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        // 결과 출력 (기존 코드 동일)
+        // 결과 출력 (i18n 적용)
         const resultSection = document.getElementById('resultSection');
         const resultText = document.getElementById('resultText');
         const resultStats = document.getElementById('resultStats');
@@ -299,10 +299,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }).join(', ');
 
         resultStats.innerHTML = `
-        <div class="stat-item">선택된 유저: ${selectedUsers.length}명</div>
-        <div class="stat-item">추출된 라인: ${extractedLines.length}개</div>
-        <div class="stat-item">유저별 라인수: ${selectedUserStats}</div>
-    `;
+            <div class="stat-item">${i18n.getMessage('mrt_stats_selected_users', [selectedUsers.length])}</div>
+            <div class="stat-item">${i18n.getMessage('mrt_stats_extracted_lines', [extractedLines.length])}</div>
+            <div class="stat-item">${i18n.getMessage('mrt_stats_user_lines', [selectedUserStats])}</div>
+        `;
 
         navigator.clipboard.writeText(resultString).then(() => {
             copyNotification.style.display = 'block';

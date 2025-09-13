@@ -7,74 +7,73 @@
 <body>
 <div class="container">
     <ul class="nav-menu">
-        <li><a href="index.html" class="nav-link">🎯 스킬 추출</a></li>
-        <li><a href="mrt_manage.html" class="nav-link">🔍 MRT 텍스트 관리</a></li>
+        <li><a href="index.html" class="nav-link" data-i18n="nav_skill_extract">🎯 스킬 추출</a></li>
+        <li><a href="mrt_manage.html" class="nav-link" data-i18n="nav_mrt_manage">🔍 MRT 텍스트 관리</a></li>
     </ul>
 
     <div class="input-container">
         <div id="editingIndicator" class="editing-indicator" style="display: none;">
-            <strong>수정 모드:</strong> <span id="editingSkillName"></span> 스킬을 수정하고 있습니다.
+            <strong data-i18n="editing_mode">수정 모드:</strong> <span id="editingSkillName"></span> <span data-i18n="editing_skill">스킬을 수정하고 있습니다.</span>
         </div>
 
         <div class="input-row">
             <select id="classSelect">
-                <option value="">직업을 선택하세요</option>
-                <option value="WARRIOR">전사 (WARRIOR)</option>
-                <option value="PALADIN">성기사 (PALADIN)</option>
-                <option value="DK">죽음의 기사 (DEATH KNIGHT)</option>
-                <option value="MONK">수도사 (MONK)</option>
-                <option value="DH">악마사냥꾼 (DEMON HUNTER)</option>
-                <option value="DRUID">드루이드 (DRUID)</option>
-                <option value="ROGUE">도적 (ROGUE)</option>
-                <option value="HUNTER">사냥꾼 (HUNTER)</option>
-                <option value="MAGE">마법사 (MAGE)</option>
-                <option value="WARLOCK">흑마법사 (WARLOCK)</option>
-                <option value="PRIEST">사제 (PRIEST)</option>
-                <option value="SHAMAN">주술사 (SHAMAN)</option>
-                <option value="EVOKER">기원사 (EVOKER)</option>
+                <option value="" data-i18n="select_class">직업을 선택하세요</option>
+                <option value="WARRIOR" data-i18n="class_warrior">전사 (WARRIOR)</option>
+                <option value="PALADIN" data-i18n="class_paladin">성기사 (PALADIN)</option>
+                <option value="DK" data-i18n="class_dk">죽음의 기사 (DEATH KNIGHT)</option>
+                <option value="MONK" data-i18n="class_monk">수도사 (MONK)</option>
+                <option value="DH" data-i18n="class_dh">악마사냥꾼 (DEMON HUNTER)</option>
+                <option value="DRUID" data-i18n="class_druid">드루이드 (DRUID)</option>
+                <option value="ROGUE" data-i18n="class_rogue">도적 (ROGUE)</option>
+                <option value="HUNTER" data-i18n="class_hunter">사냥꾼 (HUNTER)</option>
+                <option value="MAGE" data-i18n="class_mage">마법사 (MAGE)</option>
+                <option value="WARLOCK" data-i18n="class_warlock">흑마법사 (WARLOCK)</option>
+                <option value="PRIEST" data-i18n="class_priest">사제 (PRIEST)</option>
+                <option value="SHAMAN" data-i18n="class_shaman">주술사 (SHAMAN)</option>
+                <option value="EVOKER" data-i18n="class_evoker">기원사 (EVOKER)</option>
             </select>
-            <input type="text" id="displayName" placeholder="Display Name (ex: 불숨)"/>
-            <input type="text" id="spellId" placeholder="Spell ID (ex: 357208)"/>
-            <input type="text" id="englishName" placeholder="English Name (ex: fire breath)"/>
-            <input type="text" id="koreanName" placeholder="Korean Name (ex: 불의 숨결)"/>
-            <button id="addSkill">추가</button>
-            <button id="cancelEdit" class="cancel-edit" style="display: none;">수정 취소</button>
+            <input type="text" id="displayName" data-i18n="placeholder_display_name" data-i18n-placeholder="placeholder_display_name" placeholder="Display Name (ex: 불숨)"/>
+            <input type="text" id="spellId" data-i18n="placeholder_spell_id" data-i18n-placeholder="placeholder_spell_id" placeholder="Spell ID (ex: 357208)"/>
+            <input type="text" id="englishName" data-i18n="placeholder_english_name" data-i18n-placeholder="placeholder_english_name" placeholder="English Name (ex: fire breath)"/>
+            <input type="text" id="koreanName" data-i18n="placeholder_korean_name" data-i18n-placeholder="placeholder_korean_name" placeholder="Korean Name (ex: 불의 숨결)"/>
+            <button id="addSkill" data-i18n="btn_add">추가</button>
+            <button id="cancelEdit" class="cancel-edit" style="display: none;" data-i18n="btn_cancel_edit">수정 취소</button>
         </div>
         <div style="margin-bottom: 10px;">
-            <label for="exportClassSelect">📌 추출할 직업 선택: </label>
+            <label for="exportClassSelect" data-i18n="label_export_class">📌 추출할 직업 선택: </label>
             <select id="exportClassSelect">
-                <option value="">전체</option>
-                <option value="WARRIOR">전사</option>
-                <option value="PALADIN">성기사</option>
-                <option value="DK">죽음의 기사</option>
-                <option value="MONK">수도사</option>
-                <option value="DH">악마사냥꾼</option>
-                <option value="DRUID">드루이드</option>
-                <option value="ROGUE">도적</option>
-                <option value="HUNTER">사냥꾼</option>
-                <option value="MAGE">마법사</option>
-                <option value="WARLOCK">흑마법사</option>
-                <option value="PRIEST">사제</option>
-                <option value="SHAMAN">주술사</option>
-                <option value="EVOKER">기원사</option>
+                <option value="" data-i18n="option_all">전체</option>
+                <option value="WARRIOR" data-i18n="class_warrior">전사</option>
+                <option value="PALADIN" data-i18n="class_paladin">성기사</option>
+                <option value="DK" data-i18n="class_dk">죽음의 기사</option>
+                <option value="MONK" data-i18n="class_monk">수도사</option>
+                <option value="DH" data-i18n="class_dh">악마사냥꾼</option>
+                <option value="DRUID" data-i18n="class_druid">드루이드</option>
+                <option value="ROGUE" data-i18n="class_rogue">도적</option>
+                <option value="HUNTER" data-i18n="class_hunter">사냥꾼</option>
+                <option value="MAGE" data-i18n="class_mage">마법사</option>
+                <option value="WARLOCK" data-i18n="class_warlock">흑마법사</option>
+                <option value="PRIEST" data-i18n="class_priest">사제</option>
+                <option value="SHAMAN" data-i18n="class_shaman">주술사</option>
+                <option value="EVOKER" data-i18n="class_evoker">기원사</option>
             </select>
-            <button id="showExport">📤 목록 추출</button>
-            <button id="showImport">📥 목록 입력</button>
+            <button id="showExport" data-i18n="btn_export_list">📤 목록 추출</button>
+            <button id="showImport" data-i18n="btn_import_list">📥 목록 입력</button>
         </div>
 
         <div id="skillJsonContainer" style="display: none;">
             <textarea id="skillTextArea" rows="8" style="width: 100%;" placeholder=""></textarea>
             <div style="margin-top: 10px;">
-                <button id="executeSkillJsonAction">실행</button>
+                <button id="executeSkillJsonAction" data-i18n="btn_execute">실행</button>
             </div>
         </div>
-
-
     </div>
+
     <div class="class-section">
         <div class="class-header" data-class="OPTIONS">
             <div>
-                <span class="class-title">추출 옵션</span>
+                <span class="class-title" data-i18n="section_extract_options">추출 옵션</span>
             </div>
             <span class="class-toggle">▶</span>
         </div>
@@ -86,7 +85,7 @@
                 </div>
                 <div class="skill-col">
                     <label for="optionTranslate">
-                        <strong>Translate 자동 적용 (로그 사이트의 Translate 옵션, 중국 로그 추출 시 사용)</strong>
+                        <strong data-i18n="option_translate">Translate 자동 적용 (로그 사이트의 Translate 옵션, 중국 로그 추출 시 사용)</strong>
                     </label>
                 </div>
             </div>
@@ -96,27 +95,7 @@
                 </div>
                 <div class="skill-col">
                     <label for="optionAppendDisplay">
-                        <strong>추출 결과에 DisplayName 추가</strong>
-                    </label>
-                </div>
-            </div>
-            <div class="skill-opt-item">
-                <div class="skill-opt-col-check">
-                    <input type="checkbox" id="optionTipTheScales"/>
-                </div>
-                <div class="skill-col">
-                    <label for="optionTipTheScales">
-                        <strong>추출 결과에 전세 역전 포함 (기원사)</strong>
-                    </label>
-                </div>
-            </div>
-            <div class="skill-opt-item">
-                <div class="skill-opt-col-check">
-                    <input type="checkbox" id="optionIncludeRank"/>
-                </div>
-                <div class="skill-col">
-                    <label for="optionIncludeRank">
-                        <strong>추출 결과에 스킬 강화 단계 포함 (기원사)</strong>
+                        <strong data-i18n="option_append_display">추출 결과에 DisplayName 추가</strong>
                     </label>
                 </div>
             </div>
@@ -125,8 +104,7 @@
     <div id="skillsByClass"></div>
 </div>
 
+<script src="js/i18n.js"></script>
 <script type="module" src="index.js"></script>
 </body>
 </html>
-
-
