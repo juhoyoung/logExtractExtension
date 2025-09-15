@@ -9,9 +9,6 @@
     "scripting",
     "storage"
   ],
-  "host_permissions": [
-    "https://www.warcraftlogs.com/*"
-  ],
   "action": {
     "default_popup": "popup.html",
     "default_title": "Skill Extractor"
