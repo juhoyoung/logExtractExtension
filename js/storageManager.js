@@ -1,16 +1,38 @@
 // 스토리지 관련 모든 작업을 담당하는 모듈
 export class StorageManager {
+
     static async getSkills() {
         return new Promise((resolve) => {
-            chrome.storage.local.get('trackedSkills', (data) => {
-                resolve(data.trackedSkills || {});
+            chrome.storage.local.get('extractedSkills', (data) => {
+                resolve(data.extractedSkills || {});
             });
         });
     }
 
     static async saveSkills(skills) {
         return new Promise((resolve) => {
-            chrome.storage.local.set({trackedSkills: skills}, resolve);
+            chrome.storage.local.set({extractedSkills: skills}, resolve);
+        });
+    }
+
+    static async resetSkills() {
+        return new Promise((resolve, reject) => {
+            chrome.storage.local.set({extractedSkills: {}}, () => {
+                if (chrome.runtime.lastError) {
+                    console.error('resetSkills 오류:', chrome.runtime.lastError);
+                    reject(false);
+                } else {
+                    resolve(true);
+                }
+            });
+        });
+    }
+
+    static async keyExists(searchKey) {
+        return new Promise((resolve) => {
+            chrome.storage.local.get(null, (data) => {
+                resolve(Object.prototype.hasOwnProperty.call(data, searchKey));
+            });
         });
     }
 

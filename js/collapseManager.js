@@ -15,51 +15,93 @@ export class CollapseManager {
     }
 
     async applyCollapsedState() {
-        const headers = document.querySelectorAll('.class-header');
-        headers.forEach(header => {
+        // 클래스 섹션 상태 적용
+        const classHeaders = document.querySelectorAll('.class-header');
+        classHeaders.forEach(header => {
             const className = header.dataset.class;
             const container = document.querySelector(`[data-skills="${className}"]`);
             const toggle = header.querySelector('.class-toggle');
             if (!container || !toggle) return;
 
-            // 저장된 값이 true면 접힘, false면 펼침. (undefined면 템플릿 기본 상태 유지)
             const state = this.collapsedSections[className];
-            if (state === true) {
-                container.classList.add('collapsed');
-                toggle.classList.add('collapsed');
-                toggle.textContent = '▶'; // 접힘 표시
-            } else if (state === false) {
+            if (state === false) {
                 container.classList.remove('collapsed');
                 toggle.classList.remove('collapsed');
-                toggle.textContent = '▼'; // 펼침 표시
+                toggle.textContent = '▼';
+
+            } else{
+                container.classList.add('collapsed');
+                toggle.classList.add('collapsed');
+                toggle.textContent = '▶';
+            }
+        });
+
+        // 특성 섹션 상태 적용
+        const specHeaders = document.querySelectorAll('.spec-header');
+        specHeaders.forEach(header => {
+            const specKey = header.dataset.spec; // className-specName
+            const container = document.querySelector(`[data-spec-skills="${specKey}"]`);
+            const toggle = header.querySelector('.spec-toggle');
+            if (!container || !toggle) return;
+
+            const state = this.collapsedSections[specKey];
+            if (state === false) {
+                container.classList.remove('collapsed');
+                toggle.classList.remove('collapsed');
+                toggle.textContent = '▼';
+            } else{
+                container.classList.add('collapsed');
+                toggle.classList.add('collapsed');
+                toggle.textContent = '▶';
             }
         });
     }
 
     _addGlobalToggleListener() {
         document.addEventListener('click', (e) => {
-            const header = e.target.closest('.class-header');
-            if (!header) return;
+            const classHeader = e.target.closest('.class-header');
+            if (classHeader) {
+                this._handleClassToggle(classHeader);
+                return;
+            }
 
-            this._handleToggleClick(header);
+            const specHeader = e.target.closest('.spec-header');
+            if (specHeader) {
+                this._handleSpecToggle(specHeader);
+                return;
+            }
         });
     }
 
-    async _handleToggleClick(header) {
+    async _handleClassToggle(header) {
         const className = header.dataset.class;
-        const skillsContainer = document.querySelector(`[data-skills="${className}"]`);
+        const container = document.querySelector(`[data-skills="${className}"]`);
         const toggle = header.querySelector('.class-toggle');
-        if (!skillsContainer || !toggle) return;
+        if (!container || !toggle) return;
 
-        // 현재 상태 기준으로 "이후 상태"를 명확히 계산
-        const willCollapse = !skillsContainer.classList.contains('collapsed'); // 펼쳐진 상태면 접히도록
+        const willCollapse = !container.classList.contains('collapsed');
 
-        skillsContainer.classList.toggle('collapsed', willCollapse);
+        container.classList.toggle('collapsed', willCollapse);
         toggle.classList.toggle('collapsed', willCollapse);
         toggle.textContent = willCollapse ? '▶' : '▼';
 
-        // 섹션별로 상태 저장
         this.collapsedSections[className] = willCollapse;
+        await StorageManager.saveCollapsedSections(this.collapsedSections);
+    }
+
+    async _handleSpecToggle(header) {
+        const specKey = header.dataset.spec; // 예: DK-Unholy
+        const container = document.querySelector(`[data-spec-skills="${specKey}"]`);
+        const toggle = header.querySelector('.spec-toggle');
+        if (!container || !toggle) return;
+
+        const willCollapse = !container.classList.contains('collapsed');
+
+        container.classList.toggle('collapsed', willCollapse);
+        toggle.classList.toggle('collapsed', willCollapse);
+        toggle.textContent = willCollapse ? '▶' : '▼';
+
+        this.collapsedSections[specKey] = willCollapse;
         await StorageManager.saveCollapsedSections(this.collapsedSections);
     }
 }

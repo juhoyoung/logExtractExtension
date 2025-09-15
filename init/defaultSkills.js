@@ -15,13 +15,23 @@ export const defaultSkills = {
     "extractBySpellId": false,
     "ko": "소실"
   },
+  "642": {
+    "class": "PALADIN",
+    "display": "천상의 보호막",
+    "en": "Divine Shield",
+    "enabled": false,
+    "extractBySpellId": false,
+    "ko": "천상의 보호막",
+    "spec": "General"
+  },
   "740": {
     "class": "DRUID",
     "display": "평온",
     "en": "Tranquility",
     "enabled": false,
     "extractBySpellId": true,
-    "ko": "평온"
+    "ko": "평온",
+    "spec": "Restoration"
   },
   "871": {
     "class": "WARRIOR",
@@ -31,13 +41,32 @@ export const defaultSkills = {
     "extractBySpellId": false,
     "ko": "방패의 벽"
   },
+  "1022": {
+    "class": "PALADIN",
+    "display": "보호의 축복",
+    "en": "Blessing of Protection",
+    "enabled": false,
+    "extractBySpellId": false,
+    "ko": "보호의 축복",
+    "spec": "General"
+  },
+  "1044": {
+    "class": "PALADIN",
+    "display": "자유의 축복",
+    "en": "Blessing of Freedom",
+    "enabled": false,
+    "extractBySpellId": false,
+    "ko": "자유의 축복",
+    "spec": "General"
+  },
   "1122": {
     "class": "WARLOCK",
     "display": "지옥불정령 소환",
     "en": "Summon Infernal",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "지옥불정령 소환"
+    "ko": "지옥불정령 소환",
+    "spec": "Destruction"
   },
   "1160": {
     "class": "WARRIOR",
@@ -53,7 +82,8 @@ export const defaultSkills = {
     "en": "Recklessness",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "무모한 희생"
+    "ko": "무모한 희생",
+    "spec": "Fury"
   },
   "1856": {
     "class": "ROGUE",
@@ -71,6 +101,15 @@ export const defaultSkills = {
     "extractBySpellId": false,
     "ko": "교란"
   },
+  "5217": {
+    "class": "DRUID",
+    "display": "호랑이의 분노",
+    "en": "Tiger's Fury",
+    "enabled": false,
+    "extractBySpellId": false,
+    "ko": "호랑이의 분노",
+    "spec": "Feral"
+  },
   "5938": {
     "class": "ROGUE",
     "display": "독칼",
@@ -86,6 +125,15 @@ export const defaultSkills = {
     "enabled": false,
     "extractBySpellId": false,
     "ko": "천둥벼락"
+  },
+  "6940": {
+    "class": "PALADIN",
+    "display": "희생의 축복",
+    "en": "Blessing of Sacrifice",
+    "enabled": false,
+    "extractBySpellId": false,
+    "ko": "희생의 축복",
+    "spec": "General"
   },
   "10060": {
     "class": "PRIEST",
@@ -109,7 +157,8 @@ export const defaultSkills = {
     "en": "Evocation",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "환기"
+    "ko": "환기",
+    "spec": "Arcane"
   },
   "12472": {
     "class": "MAGE",
@@ -117,7 +166,8 @@ export const defaultSkills = {
     "en": "Icy Veins",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "얼음 핏줄"
+    "ko": "얼음 핏줄",
+    "spec": "Frost"
   },
   "13750": {
     "class": "ROGUE",
@@ -125,7 +175,8 @@ export const defaultSkills = {
     "en": "Adrenaline Rush",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "아드레날린 촉진"
+    "ko": "아드레날린 촉진",
+    "spec": "Outlaw"
   },
   "15286": {
     "class": "PRIEST",
@@ -133,7 +184,8 @@ export const defaultSkills = {
     "en": "Vampiric Embrace",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "흡혈의 선물"
+    "ko": "흡혈의 선물",
+    "spec": "Shadow"
   },
   "19574": {
     "class": "HUNTER",
@@ -141,7 +193,8 @@ export const defaultSkills = {
     "en": "Bestial Wrath",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "야수의 격노"
+    "ko": "야수의 격노",
+    "spec": "Beast Mastery"
   },
   "22812": {
     "class": "DRUID",
@@ -173,7 +226,17 @@ export const defaultSkills = {
     "en": "Aura Mastery",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "오라 숙련"
+    "ko": "오라 숙련",
+    "spec": "Holy"
+  },
+  "31850": {
+    "class": "PALADIN",
+    "display": "헌신적인 수호자",
+    "en": "Ardent Defender",
+    "enabled": false,
+    "extractBySpellId": false,
+    "ko": "헌신적인 수호자",
+    "spec": "Protection"
   },
   "31884": {
     "class": "PALADIN",
@@ -213,7 +276,8 @@ export const defaultSkills = {
     "en": "Dispersion",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "분산"
+    "ko": "분산",
+    "spec": "Shadow"
   },
   "48018": {
     "class": "WARLOCK",
@@ -261,7 +325,8 @@ export const defaultSkills = {
     "en": "Dancing Rune Weapon",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "춤추는 룬 무기"
+    "ko": "춤추는 룬 무기",
+    "spec": "Blood"
   },
   "49039": {
     "class": "DK",
@@ -285,7 +350,8 @@ export const defaultSkills = {
     "en": "Pillar of Frost",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "얼음 기둥"
+    "ko": "얼음 기둥",
+    "spec": "Frost"
   },
   "51533": {
     "class": "SHAMAN",
@@ -293,7 +359,8 @@ export const defaultSkills = {
     "en": "Feral Spirit",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "야수 정령"
+    "ko": "야수 정령",
+    "spec": "Enhancement"
   },
   "51690": {
     "class": "ROGUE",
@@ -301,7 +368,8 @@ export const defaultSkills = {
     "en": "Killing Spree",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "광기의 학살자"
+    "ko": "광기의 학살자",
+    "spec": "Outlaw"
   },
   "52174": {
     "class": "WARRIOR",
@@ -317,7 +385,8 @@ export const defaultSkills = {
     "en": "Vampiric Blood",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "흡혈"
+    "ko": "흡혈",
+    "spec": "Blood"
   },
   "55342": {
     "class": "MAGE",
@@ -349,7 +418,26 @@ export const defaultSkills = {
     "en": "Power Word: Barrier",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "신의 권능: 방벽"
+    "ko": "신의 권능: 방벽",
+    "spec": "Discipline"
+  },
+  "64843": {
+    "class": "PRIEST",
+    "display": "천상의 찬가",
+    "en": "Divine Hymn",
+    "enabled": false,
+    "extractBySpellId": false,
+    "ko": "천상의 찬가",
+    "spec": "Holy"
+  },
+  "64901": {
+    "class": "PRIEST",
+    "display": "희망의 상징",
+    "en": "Symbol of Hope",
+    "enabled": false,
+    "extractBySpellId": false,
+    "ko": "희망의 상징",
+    "spec": "Holy"
   },
   "80240": {
     "class": "WARLOCK",
@@ -357,7 +445,8 @@ export const defaultSkills = {
     "en": "Havoc",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "대혼란"
+    "ko": "대혼란",
+    "spec": "Destruction"
   },
   "84714": {
     "class": "MAGE",
@@ -365,7 +454,17 @@ export const defaultSkills = {
     "en": "Frozen Orb",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "얼어붙은 구슬"
+    "ko": "얼어붙은 구슬",
+    "spec": "Frost"
+  },
+  "86659": {
+    "class": "PALADIN",
+    "display": "고대 왕의 수호자",
+    "en": "Guardian of Ancient Kings",
+    "enabled": false,
+    "extractBySpellId": false,
+    "ko": "고대 왕의 수호자",
+    "spec": "Protection"
   },
   "97462": {
     "class": "WARRIOR",
@@ -381,7 +480,17 @@ export const defaultSkills = {
     "en": "Spirit Link Totem",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "정신의 고리 토템"
+    "ko": "정신의 고리 토템",
+    "spec": "Restoration"
+  },
+  "102342": {
+    "class": "DRUID",
+    "display": "무쇠껍질",
+    "en": "ironbark",
+    "enabled": false,
+    "extractBySpellId": false,
+    "ko": "무쇠껍질",
+    "spec": "Restoration"
   },
   "102558": {
     "class": "DRUID",
@@ -389,7 +498,8 @@ export const defaultSkills = {
     "en": "Incarnation: Guardian of Ursoc",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "화신: 우르속의 수호자"
+    "ko": "화신: 우르속의 수호자",
+    "spec": "Guardian"
   },
   "104773": {
     "class": "WARLOCK",
@@ -453,7 +563,8 @@ export const defaultSkills = {
     "en": "Healing Tide Totem",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "치유의 해일 토템"
+    "ko": "치유의 해일 토템",
+    "spec": "Restoration"
   },
   "108416": {
     "class": "WARLOCK",
@@ -469,7 +580,8 @@ export const defaultSkills = {
     "en": "Ice Floes",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "얼음발"
+    "ko": "얼음발",
+    "spec": "Frost"
   },
   "109304": {
     "class": "HUNTER",
@@ -493,7 +605,8 @@ export const defaultSkills = {
     "en": "Grimoire: Felguard",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "흑마법서: 지옥수호병"
+    "ko": "흑마법서: 지옥수호병",
+    "spec": "Demonology"
   },
   "113656": {
     "class": "MONK",
@@ -501,7 +614,8 @@ export const defaultSkills = {
     "en": "Fists of Fury",
     "enabled": false,
     "extractBySpellId": true,
-    "ko": "분노의 주먹"
+    "ko": "분노의 주먹",
+    "spec": "Windwalker"
   },
   "114165": {
     "class": "PALADIN",
@@ -509,7 +623,8 @@ export const defaultSkills = {
     "en": "Holy Prism",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "신성한 반사"
+    "ko": "신성한 반사",
+    "spec": "Holy"
   },
   "115203": {
     "class": "MONK",
@@ -525,7 +640,8 @@ export const defaultSkills = {
     "en": "Revival",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "재활"
+    "ko": "재활",
+    "spec": "Mistweaver"
   },
   "115399": {
     "class": "MONK",
@@ -533,7 +649,8 @@ export const defaultSkills = {
     "en": "Black Ox Brew",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "흑우주"
+    "ko": "흑우주",
+    "spec": "Brewmaster"
   },
   "116680": {
     "class": "MONK",
@@ -541,7 +658,8 @@ export const defaultSkills = {
     "en": "Thunder Focus Tea",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "집중의 천둥 차"
+    "ko": "집중의 천둥 차",
+    "spec": "Mistweaver"
   },
   "116849": {
     "class": "MONK",
@@ -549,7 +667,8 @@ export const defaultSkills = {
     "en": "Life Cocoon",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "기의 고치"
+    "ko": "기의 고치",
+    "spec": "Mistweaver"
   },
   "117952": {
     "class": "MONK",
@@ -565,7 +684,8 @@ export const defaultSkills = {
     "en": "Die by the Sword",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "투사의 혼"
+    "ko": "투사의 혼",
+    "spec": "Arms"
   },
   "120644": {
     "class": "PRIEST",
@@ -575,13 +695,23 @@ export const defaultSkills = {
     "extractBySpellId": false,
     "ko": "후광"
   },
+  "121471": {
+    "class": "ROGUE",
+    "display": "어둠의 칼날",
+    "en": "Shadow Blades",
+    "enabled": false,
+    "extractBySpellId": false,
+    "ko": "어둠의 칼날",
+    "spec": "Subtlety"
+  },
   "122278": {
     "class": "MONK",
     "display": "해악 감퇴",
     "en": "Dampen Harm",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "해악 감퇴"
+    "ko": "해악 감퇴",
+    "spec": "Brewmaster"
   },
   "122470": {
     "class": "MONK",
@@ -589,7 +719,8 @@ export const defaultSkills = {
     "en": "Touch of Karma",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "업보의 손아귀"
+    "ko": "업보의 손아귀",
+    "spec": "Windwalker"
   },
   "122783": {
     "class": "MONK",
@@ -605,7 +736,8 @@ export const defaultSkills = {
     "en": "Invoke Xuen, the White Tiger",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "백호 쉬엔의 원령"
+    "ko": "백호 쉬엔의 원령",
+    "spec": "Windwalker"
   },
   "123986": {
     "class": "MONK",
@@ -621,7 +753,8 @@ export const defaultSkills = {
     "en": "Invoke Niuzao, the Black Ox",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "흑우 니우짜오의 원령"
+    "ko": "흑우 니우짜오의 원령",
+    "spec": "Brewmaster"
   },
   "137639": {
     "class": "MONK",
@@ -629,7 +762,8 @@ export const defaultSkills = {
     "en": "Storm, Earth, and Fire",
     "enabled": false,
     "extractBySpellId": true,
-    "ko": "폭풍과 대지와 불"
+    "ko": "폭풍과 대지와 불",
+    "spec": "Windwalker"
   },
   "152175": {
     "class": "MONK",
@@ -637,7 +771,8 @@ export const defaultSkills = {
     "en": "Whirling Dragon Punch",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "소용돌이 용의 주먹"
+    "ko": "소용돌이 용의 주먹",
+    "spec": "Windwalker"
   },
   "153595": {
     "class": "MAGE",
@@ -645,7 +780,8 @@ export const defaultSkills = {
     "en": "Comet Storm",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "혜성 폭풍"
+    "ko": "혜성 폭풍",
+    "spec": "Frost"
   },
   "153626": {
     "class": "MAGE",
@@ -653,7 +789,8 @@ export const defaultSkills = {
     "en": "Arcane Orb",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "비전 보주"
+    "ko": "비전 보주",
+    "spec": "Arcane"
   },
   "157153": {
     "class": "SHAMAN",
@@ -661,7 +798,8 @@ export const defaultSkills = {
     "en": "Cloudburst Totem",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "폭우의 토템"
+    "ko": "폭우의 토템",
+    "spec": "Restoration"
   },
   "167105": {
     "class": "WARRIOR",
@@ -669,7 +807,8 @@ export const defaultSkills = {
     "en": "Colossus Smash",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "거인의 강타"
+    "ko": "거인의 강타",
+    "spec": "Arms"
   },
   "184364": {
     "class": "WARRIOR",
@@ -685,7 +824,8 @@ export const defaultSkills = {
     "en": "Shield of Vengeance",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "복수의 방패"
+    "ko": "복수의 방패",
+    "spec": "Protection"
   },
   "186265": {
     "class": "HUNTER",
@@ -701,7 +841,8 @@ export const defaultSkills = {
     "en": "Aspect of the Eagle",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "독수리의 상"
+    "ko": "독수리의 상",
+    "spec": "Survival"
   },
   "188499": {
     "class": "DH",
@@ -709,7 +850,8 @@ export const defaultSkills = {
     "en": "Blade Dance",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "칼춤"
+    "ko": "칼춤",
+    "spec": "Havok"
   },
   "190319": {
     "class": "MAGE",
@@ -717,7 +859,8 @@ export const defaultSkills = {
     "en": "Combustion",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "발화"
+    "ko": "발화",
+    "spec": "Fire"
   },
   "191634": {
     "class": "SHAMAN",
@@ -725,7 +868,8 @@ export const defaultSkills = {
     "en": "Stormkeeper",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "폭풍수호자"
+    "ko": "폭풍수호자",
+    "spec": "Elemental"
   },
   "192249": {
     "class": "SHAMAN",
@@ -733,7 +877,8 @@ export const defaultSkills = {
     "en": "Storm Elemental",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "폭풍의 정령"
+    "ko": "폭풍의 정령",
+    "spec": "Elemental"
   },
   "194223": {
     "class": "DRUID",
@@ -741,7 +886,8 @@ export const defaultSkills = {
     "en": "Celestial Alignment",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "천체의 정렬"
+    "ko": "천체의 정렬",
+    "spec": "Balance"
   },
   "194509": {
     "class": "PRIEST",
@@ -749,7 +895,8 @@ export const defaultSkills = {
     "en": "Power Word: Radiance",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "신의 권능: 광휘"
+    "ko": "신의 권능: 광휘",
+    "spec": "Discipline"
   },
   "194844": {
     "class": "DK",
@@ -757,7 +904,8 @@ export const defaultSkills = {
     "en": "Bonestorm",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "뼈폭풍"
+    "ko": "뼈폭풍",
+    "spec": "Blood"
   },
   "196937": {
     "class": "ROGUE",
@@ -773,7 +921,8 @@ export const defaultSkills = {
     "en": "Flourish",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "번성"
+    "ko": "번성",
+    "spec": "Restoration"
   },
   "198030": {
     "class": "DH",
@@ -781,7 +930,8 @@ export const defaultSkills = {
     "en": "Eye Beam",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "안광"
+    "ko": "안광",
+    "spec": "Havok"
   },
   "198103": {
     "class": "SHAMAN",
@@ -823,13 +973,23 @@ export const defaultSkills = {
     "extractBySpellId": false,
     "ko": "환각의 마귀"
   },
+  "200183": {
+    "class": "PRIEST",
+    "display": "절정",
+    "en": "Apotheosis",
+    "enabled": false,
+    "extractBySpellId": false,
+    "ko": "절정",
+    "spec": "Holy"
+  },
   "200851": {
     "class": "DRUID",
     "display": "잠자는 자의 분노",
     "en": "Rage of the Sleeper",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "잠자는 자의 분노"
+    "ko": "잠자는 자의 분노",
+    "spec": "Guardian"
   },
   "201764": {
     "class": "SHAMAN",
@@ -837,7 +997,8 @@ export const defaultSkills = {
     "en": "Recall Cloudburst Totem",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "폭우의 토템 회수"
+    "ko": "폭우의 토템 회수",
+    "spec": "Restoration"
   },
   "202168": {
     "class": "WARRIOR",
@@ -847,13 +1008,23 @@ export const defaultSkills = {
     "extractBySpellId": false,
     "ko": "예견된 승리"
   },
+  "204018": {
+    "class": "PALADIN",
+    "display": "주문 수호의 축복",
+    "en": "Blessing of Spellwarding",
+    "enabled": false,
+    "extractBySpellId": false,
+    "ko": "주문 수호의 축복",
+    "spec": "Protection"
+  },
   "204021": {
     "class": "DH",
     "display": "불타는 낙인",
     "en": "Fiery Brand",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "불타는 낙인"
+    "ko": "불타는 낙인",
+    "spec": "Vengeance"
   },
   "204598": {
     "class": "DH",
@@ -869,7 +1040,8 @@ export const defaultSkills = {
     "en": "Phantom Singularity",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "유령 특이점"
+    "ko": "유령 특이점",
+    "spec": "Affliction"
   },
   "205180": {
     "class": "WARLOCK",
@@ -877,7 +1049,8 @@ export const defaultSkills = {
     "en": "Summon Darkglare",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "암흑시선 소환"
+    "ko": "암흑시선 소환",
+    "spec": "Affliction"
   },
   "205636": {
     "class": "DRUID",
@@ -885,7 +1058,8 @@ export const defaultSkills = {
     "en": "Force of Nature",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "자연의 군대"
+    "ko": "자연의 군대",
+    "spec": "Balance"
   },
   "207289": {
     "class": "DK",
@@ -893,7 +1067,8 @@ export const defaultSkills = {
     "en": "Unholy Assault",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "부정의 습격"
+    "ko": "부정의 습격",
+    "spec": "Unholy"
   },
   "207407": {
     "class": "DH",
@@ -901,7 +1076,8 @@ export const defaultSkills = {
     "en": "Soul Carver",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "영혼 저미기"
+    "ko": "영혼 저미기",
+    "spec": "Vengeance"
   },
   "210152": {
     "class": "DH",
@@ -909,7 +1085,8 @@ export const defaultSkills = {
     "en": "Death Sweep",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "죽음의 휩쓸기"
+    "ko": "죽음의 휩쓸기",
+    "spec": "Havok"
   },
   "212084": {
     "class": "DH",
@@ -917,7 +1094,17 @@ export const defaultSkills = {
     "en": "Fel Devastation",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "지옥 황폐"
+    "ko": "지옥 황폐",
+    "spec": "Vengeance"
+  },
+  "212283": {
+    "class": "ROGUE",
+    "display": "죽음의 상징",
+    "en": "Symbols of Death",
+    "enabled": false,
+    "extractBySpellId": false,
+    "ko": "죽음의 상징",
+    "spec": "Subtlety"
   },
   "212552": {
     "class": "DK",
@@ -933,7 +1120,8 @@ export const defaultSkills = {
     "en": "Tombstone",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "묘비"
+    "ko": "묘비",
+    "spec": "Blood"
   },
   "228260": {
     "class": "PRIEST",
@@ -941,7 +1129,17 @@ export const defaultSkills = {
     "en": "Void Eruption",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "공허 방출"
+    "ko": "공허 방출",
+    "spec": "Shadow"
+  },
+  "228920": {
+    "class": "WARRIOR",
+    "display": "쇠날발톱",
+    "en": "Ravager",
+    "enabled": false,
+    "extractBySpellId": false,
+    "ko": "쇠날발톱",
+    "spec": "General"
   },
   "235219": {
     "class": "MAGE",
@@ -949,7 +1147,8 @@ export const defaultSkills = {
     "en": "Cold Snap",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "매서운 한파"
+    "ko": "매서운 한파",
+    "spec": "Frost"
   },
   "235313": {
     "class": "MAGE",
@@ -957,7 +1156,8 @@ export const defaultSkills = {
     "en": "Blazing Barrier",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "이글거리는 방벽"
+    "ko": "이글거리는 방벽",
+    "spec": "Fire"
   },
   "235450": {
     "class": "MAGE",
@@ -965,7 +1165,8 @@ export const defaultSkills = {
     "en": "Prismatic Barrier",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "오색 방벽"
+    "ko": "오색 방벽",
+    "spec": "Arcane"
   },
   "255937": {
     "class": "PALADIN",
@@ -973,7 +1174,17 @@ export const defaultSkills = {
     "en": "Wake of Ashes",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "파멸의 재"
+    "ko": "파멸의 재",
+    "spec": "Retribution"
+  },
+  "257044": {
+    "class": "HUNTER",
+    "display": "속사",
+    "en": "Rapid Fire",
+    "enabled": false,
+    "extractBySpellId": false,
+    "ko": "속사",
+    "spec": "Marksmanship"
   },
   "258860": {
     "class": "DH",
@@ -981,7 +1192,17 @@ export const defaultSkills = {
     "en": "Essence Break",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "정수 파쇄"
+    "ko": "정수 파쇄",
+    "spec": "Havok"
+  },
+  "260243": {
+    "class": "HUNTER",
+    "display": "연발 공격",
+    "en": "Volley",
+    "enabled": false,
+    "extractBySpellId": false,
+    "ko": "연발 공격",
+    "spec": "Marksmanship"
   },
   "260708": {
     "class": "WARRIOR",
@@ -989,7 +1210,8 @@ export const defaultSkills = {
     "en": "Sweeping Strikes",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "휩쓸기 일격"
+    "ko": "휩쓸기 일격",
+    "spec": "Arms"
   },
   "263165": {
     "class": "PRIEST",
@@ -997,7 +1219,8 @@ export const defaultSkills = {
     "en": "Void Torrent",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "공허의 격류"
+    "ko": "공허의 격류",
+    "spec": "Shadow"
   },
   "264130": {
     "class": "WARLOCK",
@@ -1005,7 +1228,8 @@ export const defaultSkills = {
     "en": "Power Siphon",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "마력 착취"
+    "ko": "마력 착취",
+    "spec": "Demonology"
   },
   "264735": {
     "class": "HUNTER",
@@ -1021,7 +1245,8 @@ export const defaultSkills = {
     "en": "Summon Demonic Tyrant",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "악마 폭군 소환"
+    "ko": "악마 폭군 소환",
+    "spec": "Demonology"
   },
   "267171": {
     "class": "WARLOCK",
@@ -1029,7 +1254,8 @@ export const defaultSkills = {
     "en": "Demonic Strength",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "악마의 기운"
+    "ko": "악마의 기운",
+    "spec": "Demonology"
   },
   "269752": {
     "class": "HUNTER",
@@ -1037,7 +1263,8 @@ export const defaultSkills = {
     "en": "Flanking Strike",
     "enabled": false,
     "extractBySpellId": true,
-    "ko": "측방 강타"
+    "ko": "측방 강타",
+    "spec": "Survival"
   },
   "271466": {
     "class": "PRIEST",
@@ -1045,7 +1272,8 @@ export const defaultSkills = {
     "en": "Luminous Barrier",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "영롱한 방벽"
+    "ko": "영롱한 방벽",
+    "spec": "Discipline"
   },
   "272679": {
     "class": "HUNTER",
@@ -1061,7 +1289,17 @@ export const defaultSkills = {
     "en": "Consumption",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "섭취"
+    "ko": "섭취",
+    "spec": "Blood"
+  },
+  "274837": {
+    "class": "DRUID",
+    "display": "야성의 광기",
+    "en": "Feral Frenzy",
+    "enabled": false,
+    "extractBySpellId": false,
+    "ko": "야성의 광기",
+    "spec": "Feral"
   },
   "275699": {
     "class": "DK",
@@ -1069,7 +1307,17 @@ export const defaultSkills = {
     "en": "Apocalypse",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "대재앙"
+    "ko": "대재앙",
+    "spec": "Unholy"
+  },
+  "280719": {
+    "class": "ROGUE",
+    "display": "은밀한 기술",
+    "en": "Secret Technique",
+    "enabled": false,
+    "extractBySpellId": false,
+    "ko": "은밀한 기술",
+    "spec": "Subtlety"
   },
   "288613": {
     "class": "HUNTER",
@@ -1077,7 +1325,8 @@ export const defaultSkills = {
     "en": "Trueshot",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "정조준"
+    "ko": "정조준",
+    "spec": "Marksmanship"
   },
   "315508": {
     "class": "ROGUE",
@@ -1085,7 +1334,8 @@ export const defaultSkills = {
     "en": "Roll the Bones",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "뼈주사위"
+    "ko": "뼈주사위",
+    "spec": "Outlaw"
   },
   "321507": {
     "class": "MAGE",
@@ -1093,7 +1343,8 @@ export const defaultSkills = {
     "en": "Touch of the Magi",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "비전의 여파"
+    "ko": "비전의 여파",
+    "spec": "Arcane"
   },
   "321530": {
     "class": "HUNTER",
@@ -1101,7 +1352,8 @@ export const defaultSkills = {
     "en": "Bloodshed",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "유혈"
+    "ko": "유혈",
+    "spec": "Beast Mastery"
   },
   "322101": {
     "class": "MONK",
@@ -1125,7 +1377,8 @@ export const defaultSkills = {
     "en": "Invoke Yu'lon, the Jade Serpent",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "옥룡 위론의 원령"
+    "ko": "옥룡 위론의 원령",
+    "spec": "Mistweaver"
   },
   "325153": {
     "class": "MONK",
@@ -1133,7 +1386,8 @@ export const defaultSkills = {
     "en": "Exploding Keg",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "폭발하는 맥주통"
+    "ko": "폭발하는 맥주통",
+    "spec": "Brewmaster"
   },
   "325197": {
     "class": "MONK",
@@ -1141,7 +1395,8 @@ export const defaultSkills = {
     "en": "Invoke Chi-Ji, the Red Crane",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "주학 츠지의 원령"
+    "ko": "주학 츠지의 원령",
+    "spec": "Mistweaver"
   },
   "342245": {
     "class": "MAGE",
@@ -1157,7 +1412,8 @@ export const defaultSkills = {
     "en": "Execution Sentence",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "사형 선고"
+    "ko": "사형 선고",
+    "spec": "Retribution"
   },
   "344548": {
     "class": "SHAMAN",
@@ -1173,7 +1429,8 @@ export const defaultSkills = {
     "en": "Dream Breath",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "꿈의 숨결"
+    "ko": "꿈의 숨결",
+    "spec": "Preservation"
   },
   "357208": {
     "class": "EVOKER",
@@ -1189,7 +1446,8 @@ export const defaultSkills = {
     "en": "Eternity Surge",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "영원의 쇄도"
+    "ko": "영원의 쇄도",
+    "spec": "Devastation"
   },
   "359844": {
     "class": "HUNTER",
@@ -1197,7 +1455,8 @@ export const defaultSkills = {
     "en": "Call of the Wild",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "야생의 부름"
+    "ko": "야생의 부름",
+    "spec": "Beast Mastery"
   },
   "360194": {
     "class": "ROGUE",
@@ -1205,7 +1464,8 @@ export const defaultSkills = {
     "en": "Deathmark",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "죽음표식"
+    "ko": "죽음표식",
+    "spec": "Assassination"
   },
   "360952": {
     "class": "HUNTER",
@@ -1213,7 +1473,8 @@ export const defaultSkills = {
     "en": "Coordinated Assault",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "협공"
+    "ko": "협공",
+    "spec": "Survival"
   },
   "360966": {
     "class": "HUNTER",
@@ -1221,7 +1482,8 @@ export const defaultSkills = {
     "en": "Spearhead",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "최전선"
+    "ko": "최전선",
+    "spec": "Survival"
   },
   "363502": {
     "class": "EVOKER",
@@ -1229,7 +1491,8 @@ export const defaultSkills = {
     "en": "Dream Flight",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "꿈의 비행"
+    "ko": "꿈의 비행",
+    "spec": "Preservation"
   },
   "363534": {
     "class": "EVOKER",
@@ -1237,7 +1500,8 @@ export const defaultSkills = {
     "en": "Rewind",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "되돌리기"
+    "ko": "되돌리기",
+    "spec": "Preservation"
   },
   "363916": {
     "class": "EVOKER",
@@ -1253,7 +1517,8 @@ export const defaultSkills = {
     "en": "Arcane Surge",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "비전 쇄도"
+    "ko": "비전 쇄도",
+    "spec": "Arcane"
   },
   "367230": {
     "class": "EVOKER",
@@ -1261,7 +1526,8 @@ export const defaultSkills = {
     "en": "Spiritbloom",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "영혼 만개"
+    "ko": "영혼 만개",
+    "spec": "Preservation"
   },
   "370537": {
     "class": "EVOKER",
@@ -1269,7 +1535,8 @@ export const defaultSkills = {
     "en": "Stasis (Store)",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "정지장 (Store)"
+    "ko": "정지장 (Store)",
+    "spec": "Preservation"
   },
   "370553": {
     "class": "EVOKER",
@@ -1285,7 +1552,8 @@ export const defaultSkills = {
     "en": "Stasis (Release)",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "정지장 (Release)"
+    "ko": "정지장 (Release)",
+    "spec": "Preservation"
   },
   "370960": {
     "class": "EVOKER",
@@ -1293,7 +1561,8 @@ export const defaultSkills = {
     "en": "Emerald Communion",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "에메랄드 교감"
+    "ko": "에메랄드 교감",
+    "spec": "Preservation"
   },
   "370965": {
     "class": "DH",
@@ -1333,7 +1602,8 @@ export const defaultSkills = {
     "en": "Dragonrage",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "용의 분노"
+    "ko": "용의 분노",
+    "spec": "Devastation"
   },
   "375576": {
     "class": "PALADIN",
@@ -1359,6 +1629,15 @@ export const defaultSkills = {
     "extractBySpellId": false,
     "ko": "용사의 창"
   },
+  "378974": {
+    "class": "PALADIN",
+    "display": "빛의 수호 방패",
+    "en": "Bastion of Light",
+    "enabled": false,
+    "extractBySpellId": false,
+    "ko": "빛의 수호 방패",
+    "spec": "Protection"
+  },
   "381623": {
     "class": "ROGUE",
     "display": "엉겅퀴 차",
@@ -1373,7 +1652,8 @@ export const defaultSkills = {
     "en": "Keep It Rolling",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "도박의 연속"
+    "ko": "도박의 연속",
+    "spec": "Outlaw"
   },
   "382440": {
     "class": "MAGE",
@@ -1405,7 +1685,17 @@ export const defaultSkills = {
     "en": "Doom Winds",
     "enabled": false,
     "extractBySpellId": true,
-    "ko": "파멸의 바람"
+    "ko": "파멸의 바람",
+    "spec": "Enhancement"
+  },
+  "384631": {
+    "class": "ROGUE",
+    "display": "채찍질",
+    "en": "flagellation",
+    "enabled": false,
+    "extractBySpellId": false,
+    "ko": "채찍질",
+    "spec": "Subtlety"
   },
   "385627": {
     "class": "ROGUE",
@@ -1413,7 +1703,8 @@ export const defaultSkills = {
     "en": "Kingsbane",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "왕의 파멸"
+    "ko": "왕의 파멸",
+    "spec": "Assassination"
   },
   "385954": {
     "class": "WARRIOR",
@@ -1421,7 +1712,8 @@ export const defaultSkills = {
     "en": "Shield Charge",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "방패 돌격"
+    "ko": "방패 돌격",
+    "spec": "Protection"
   },
   "386997": {
     "class": "WARLOCK",
@@ -1429,7 +1721,17 @@ export const defaultSkills = {
     "en": "Soul Rot",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "영혼 부식"
+    "ko": "영혼 부식",
+    "spec": "Affliction"
+  },
+  "387174": {
+    "class": "PALADIN",
+    "display": "티르의 눈",
+    "en": "Eye of Tyr",
+    "enabled": false,
+    "extractBySpellId": false,
+    "ko": "티르의 눈",
+    "spec": "Protection"
   },
   "387184": {
     "class": "MONK",
@@ -1437,7 +1739,8 @@ export const defaultSkills = {
     "en": "Weapons of Order",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "질서의 무기"
+    "ko": "질서의 무기",
+    "spec": "Brewmaster"
   },
   "388007": {
     "class": "PALADIN",
@@ -1445,7 +1748,8 @@ export const defaultSkills = {
     "en": "Blessing of Summer",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "여름의 축복"
+    "ko": "여름의 축복",
+    "spec": "Holy"
   },
   "388010": {
     "class": "PALADIN",
@@ -1453,7 +1757,8 @@ export const defaultSkills = {
     "en": "Blessing of Autumn",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "가을의 축복"
+    "ko": "가을의 축복",
+    "spec": "Holy"
   },
   "388011": {
     "class": "PALADIN",
@@ -1461,7 +1766,8 @@ export const defaultSkills = {
     "en": "Blessing of Winter",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "겨울의 축복"
+    "ko": "겨울의 축복",
+    "spec": "Holy"
   },
   "388013": {
     "class": "PALADIN",
@@ -1469,7 +1775,8 @@ export const defaultSkills = {
     "en": "Blessing of Spring",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "봄의 축복"
+    "ko": "봄의 축복",
+    "spec": "Holy"
   },
   "388615": {
     "class": "MONK",
@@ -1477,7 +1784,8 @@ export const defaultSkills = {
     "en": "Restoral",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "회복"
+    "ko": "회복",
+    "spec": "Mistweaver"
   },
   "390163": {
     "class": "DH",
@@ -1493,7 +1801,8 @@ export const defaultSkills = {
     "en": "Dark Ascension",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "어둠의 승천"
+    "ko": "어둠의 승천",
+    "spec": "Shadow"
   },
   "391528": {
     "class": "DRUID",
@@ -1509,7 +1818,8 @@ export const defaultSkills = {
     "en": "Strike of the Windlord",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "바람의 군주의 일격"
+    "ko": "바람의 군주의 일격",
+    "spec": "Windwalker"
   },
   "395152": {
     "class": "EVOKER",
@@ -1517,7 +1827,8 @@ export const defaultSkills = {
     "en": "Ebon Might",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "칠흑의 힘"
+    "ko": "칠흑의 힘",
+    "spec": "Augmentation"
   },
   "399491": {
     "class": "MONK",
@@ -1525,7 +1836,8 @@ export const defaultSkills = {
     "en": "Sheilun's Gift",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "셰이룬의 선물"
+    "ko": "셰이룬의 선물",
+    "spec": "Mistweaver"
   },
   "404977": {
     "class": "EVOKER",
@@ -1533,7 +1845,8 @@ export const defaultSkills = {
     "en": "Time Skip",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "시간 건너뛰기"
+    "ko": "시간 건너뛰기",
+    "spec": "Augmentation"
   },
   "414658": {
     "class": "MAGE",
@@ -1549,7 +1862,8 @@ export const defaultSkills = {
     "en": "Ultimate Penitence",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "궁극의 참회"
+    "ko": "궁극의 참회",
+    "spec": "Discipline"
   },
   "428930": {
     "class": "PRIEST",
@@ -1574,6 +1888,15 @@ export const defaultSkills = {
     "enabled": false,
     "extractBySpellId": false,
     "ko": "위안의 흉조"
+  },
+  "432459": {
+    "class": "PALADIN",
+    "display": "신성한 보루",
+    "en": "Holy Bulwark",
+    "enabled": false,
+    "extractBySpellId": false,
+    "ko": "신성한 보루",
+    "spec": "Protection"
   },
   "439843": {
     "class": "DK",
@@ -1605,7 +1928,8 @@ export const defaultSkills = {
     "en": "Breath of Eons",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "영겁의 숨결"
+    "ko": "영겁의 숨결",
+    "spec": "Augmentation"
   },
   "442726": {
     "class": "WARLOCK",
@@ -1613,7 +1937,8 @@ export const defaultSkills = {
     "en": "Malevolence",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "적개심"
+    "ko": "적개심",
+    "spec": "Affliction"
   },
   "443028": {
     "class": "MONK",
@@ -1653,7 +1978,8 @@ export const defaultSkills = {
     "en": "Bladestorm",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "칼날폭풍"
+    "ko": "칼날폭풍",
+    "spec": "General"
   },
   "451235": {
     "class": "PRIEST",
@@ -1669,7 +1995,8 @@ export const defaultSkills = {
     "en": "Abyssal Gaze",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "심연의 응시"
+    "ko": "심연의 응시",
+    "spec": "Havok"
   },
   "452930": {
     "class": "WARLOCK",
@@ -1685,7 +2012,8 @@ export const defaultSkills = {
     "en": "Crusade",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "성전"
+    "ko": "성전",
+    "spec": "Retribution"
   },
   "455395": {
     "class": "DK",
@@ -1693,7 +2021,8 @@ export const defaultSkills = {
     "en": "Raise Abomination",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "누더기골렘 되살리기"
+    "ko": "누더기골렘 되살리기",
+    "spec": "Unholy"
   },
   "456330": {
     "class": "ROGUE",
@@ -1701,7 +2030,8 @@ export const defaultSkills = {
     "en": "Cold Blood",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "냉혈"
+    "ko": "냉혈",
+    "spec": "General"
   },
   "472433": {
     "class": "PRIEST",
@@ -1709,7 +2039,17 @@ export const defaultSkills = {
     "en": "Evangelism",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "사도"
+    "ko": "사도",
+    "spec": "Discipline"
+  },
+  "1217413": {
+    "class": "MONK",
+    "display": "날카로운 바람",
+    "en": "Slicing Winds",
+    "enabled": false,
+    "extractBySpellId": false,
+    "ko": "Slicing Winds",
+    "spec": "Windwalker"
   },
   "1218090": {
     "class": "SHAMAN",
@@ -1717,7 +2057,8 @@ export const defaultSkills = {
     "en": "Primordial Storm",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "태고의 폭풍"
+    "ko": "태고의 폭풍",
+    "spec": "Enhancement"
   },
   "1241059": {
     "class": "MONK",
@@ -1725,7 +2066,8 @@ export const defaultSkills = {
     "en": "Celestial Infusion",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "천신의 주입"
+    "ko": "천신의 주입",
+    "spec": "Brewmaster"
   },
   "1249658": {
     "class": "DK",
@@ -1733,7 +2075,8 @@ export const defaultSkills = {
     "en": "Breath of Sindragosa",
     "enabled": false,
     "extractBySpellId": false,
-    "ko": "신드라고사의 숨결"
+    "ko": "신드라고사의 숨결",
+    "spec": "Frost"
   }
 };
 

@@ -1,6 +1,6 @@
 {
   "app_title": {
-    "message": "🔥 Skill Tracker"
+    "message": "🔥 Skill Extractor"
   },
   "status_use_on_warcraft_logs": {
     "message": "Use on Warcraft Logs page"
@@ -39,10 +39,10 @@
     "message": "🔄 Analyzing raw logs..."
   },
   "status_no_skills_found": {
-    "message": "⚠️ No trackable skills found"
+    "message": "⚠️ No extractable skills found"
   },
   "status_no_raw_skills_found": {
-    "message": "⚠️ No trackable raw skills found"
+    "message": "⚠️ No extractable raw skills found"
   },
   "status_skills_found": {
     "message": "✅ Found $1 skill events"
@@ -52,6 +52,15 @@
   },
   "status_error": {
     "message": "❌ Error occurred"
+  },
+  "status_no_skills_active": {
+    "message": "⚠️ No active Extract skills available"
+  },
+  "all_active_skills": {
+    "message": "All Active Extract Skills"
+  },
+  "section_current_active_skills": {
+    "message": "Current Active Skills"
   },
   "status_results_cleared": {
     "message": "Results cleared"
@@ -153,16 +162,16 @@
     "message": "Evoker (EVOKER)"
   },
   "placeholder_display_name": {
-    "message": "Display Name (ex: Fire Breath)"
+    "message": "Display Name (ex: FB)"
   },
   "placeholder_spell_id": {
     "message": "Spell ID (ex: 357208)"
   },
   "placeholder_english_name": {
-    "message": "English Name (ex: fire breath)"
+    "message": "English Name (ex: Fire Breath)"
   },
-  "placeholder_korean_name": {
-    "message": "Korean Name (ex: 불의 숨결)"
+  "placeholder_optional_name": {
+    "message": "Optional Name [option] (ex: 불의 숨결)"
   },
   "btn_add": {
     "message": "Add"
@@ -177,19 +186,22 @@
     "message": "All"
   },
   "btn_export_list": {
-    "message": "📤 Export List"
+    "message": "📤 Export Skill List"
   },
   "btn_import_list": {
-    "message": "📥 Import List"
+    "message": "📥 Import Skill List"
   },
   "btn_execute": {
     "message": "Execute"
+  },
+  "btn_hide": {
+    "message": "Hide"
   },
   "section_extract_options": {
     "message": "Extract Options"
   },
   "option_translate": {
-    "message": "Translate auto-apply (Warcraft Logs Translate option, use for Chinese logs)"
+    "message": "Translate auto-apply (Warcraft Logs Translate option, use for non-English logs)"
   },
   "option_append_display": {
     "message": "Add DisplayName to extract results"
@@ -212,8 +224,8 @@
   "col_english": {
     "message": "English Name"
   },
-  "col_korean": {
-    "message": "Korean Name"
+  "col_optional": {
+    "message": "Optional Name"
   },
   "col_spell_id_extract": {
     "message": "Extract by Spell ID"
@@ -243,7 +255,7 @@
     "message": "Spell ID must be numeric only."
   },
   "alert_name_required": {
-    "message": "Either English name or Korean name must be entered."
+    "message": "English name is required."
   },
   "confirm_duplicate_id": {
     "message": "The same Spell ID already exists. Do you want to overwrite it?"
@@ -349,5 +361,15 @@
   },
   "mrt_replace_placeholder": {
     "message": "New ID to replace with"
+  },
+  "confirmResetSkills": {
+    "message": "Are you sure you want to Delete the skill list?\nThis action cannot be undone.\nMake sure to press the Export Skill List button to back up before deleting."
+  },
+  "resetSkillsCompleted": {
+    "message": "Skill list has been Delete."
+  },
+  "resetButton": {
+    "message": "🚫 Delete ALL Skill List 🚫"
   }
+
 }

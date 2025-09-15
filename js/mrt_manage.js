@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        // 통계 (i18n 적용)
+        // 통계
         const totalLines = allLines.length;
         const linesWithUsers = Array.from(userDataMap.values()).reduce((sum, data) => sum + data.count, 0);
         userStats.innerHTML = `
@@ -200,7 +200,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const sortedUsers = Array.from(userDataMap.entries()).sort((a, b) => b[1].count - a[1].count);
 
-        // 유저 목록 생성 (i18n 적용)
+        // 유저 목록 생성
         userGrid.innerHTML = sortedUsers.map(([userId, data]) => `
             <div class="user-item" data-user="${userId}">
                 <div class="user-info">
@@ -248,6 +248,24 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    function escapeRegExp(str) {
+        return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    function replaceWholeWord(text, word, replacement) {
+        const escaped = escapeRegExp(word);
+
+        // 권장(최신 엔진): 유니코드 문자를 고려한 단어 경계(lookbehind/lookahead, u 플래그)
+        try {
+            const regex = new RegExp(`(?<![\\p{L}\\p{N}_])${escaped}(?![\\p{L}\\p{N}_])`, 'gu');
+            return text.replace(regex, replacement);
+        } catch (e) {
+            // 폴백(구형 엔진 호환): 캡쳐로 앞문자 보존
+            const regex2 = new RegExp(`(^|[^A-Za-z0-9_])(${escaped})(?=$|[^A-Za-z0-9_])`, 'g');
+            return text.replace(regex2, (match, p1, p2) => p1 + replacement);
+        }
+    }
+
     // 선택된 유저들의 라인 추출
     function extractSelectedUsers() {
         const checkedBoxes = document.querySelectorAll('#userGrid input[type="checkbox"]:checked');
@@ -275,15 +293,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 let newLine = line;
                 userIds.forEach(uid => {
                     if (replaceMap[uid]) {
-                        const regex = new RegExp(`\\b${uid}\\b`, 'g');
-                        newLine = newLine.replace(regex, replaceMap[uid]);
+                        newLine = replaceWholeWord(newLine, uid, replaceMap[uid]);
                     }
                 });
                 extractedLines.push(newLine);
             }
         });
 
-        // 결과 출력 (i18n 적용)
+        // 결과 출력
         const resultSection = document.getElementById('resultSection');
         const resultText = document.getElementById('resultText');
         const resultStats = document.getElementById('resultStats');

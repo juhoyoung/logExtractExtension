@@ -21,6 +21,10 @@ export class ImportExportManager {
         }
     }
 
+    hideSkillContainer(){
+        this.skillJsonContainer.style.display = 'none';
+    }
+
     async _handleExportMode() {
         this.skillTextArea.placeholder = t('placeholder_export');
         const skills = await StorageManager.getSkills();

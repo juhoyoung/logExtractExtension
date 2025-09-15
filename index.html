@@ -17,28 +17,34 @@
         </div>
 
         <div class="input-row">
-            <select id="classSelect">
-                <option value="" data-i18n="select_class">직업을 선택하세요</option>
-                <option value="WARRIOR" data-i18n="class_warrior">전사 (WARRIOR)</option>
-                <option value="PALADIN" data-i18n="class_paladin">성기사 (PALADIN)</option>
-                <option value="DK" data-i18n="class_dk">죽음의 기사 (DEATH KNIGHT)</option>
-                <option value="MONK" data-i18n="class_monk">수도사 (MONK)</option>
-                <option value="DH" data-i18n="class_dh">악마사냥꾼 (DEMON HUNTER)</option>
-                <option value="DRUID" data-i18n="class_druid">드루이드 (DRUID)</option>
-                <option value="ROGUE" data-i18n="class_rogue">도적 (ROGUE)</option>
-                <option value="HUNTER" data-i18n="class_hunter">사냥꾼 (HUNTER)</option>
-                <option value="MAGE" data-i18n="class_mage">마법사 (MAGE)</option>
-                <option value="WARLOCK" data-i18n="class_warlock">흑마법사 (WARLOCK)</option>
-                <option value="PRIEST" data-i18n="class_priest">사제 (PRIEST)</option>
-                <option value="SHAMAN" data-i18n="class_shaman">주술사 (SHAMAN)</option>
-                <option value="EVOKER" data-i18n="class_evoker">기원사 (EVOKER)</option>
-            </select>
-            <input type="text" id="displayName" data-i18n="placeholder_display_name" data-i18n-placeholder="placeholder_display_name" placeholder="Display Name (ex: 불숨)"/>
-            <input type="text" id="spellId" data-i18n="placeholder_spell_id" data-i18n-placeholder="placeholder_spell_id" placeholder="Spell ID (ex: 357208)"/>
-            <input type="text" id="englishName" data-i18n="placeholder_english_name" data-i18n-placeholder="placeholder_english_name" placeholder="English Name (ex: fire breath)"/>
-            <input type="text" id="koreanName" data-i18n="placeholder_korean_name" data-i18n-placeholder="placeholder_korean_name" placeholder="Korean Name (ex: 불의 숨결)"/>
-            <button id="addSkill" data-i18n="btn_add">추가</button>
-            <button id="cancelEdit" class="cancel-edit" style="display: none;" data-i18n="btn_cancel_edit">수정 취소</button>
+            <div class="select-row">
+                <select id="classSelect">
+                    <option value="" data-i18n="select_class">직업을 선택하세요</option>
+                    <option value="WARRIOR" data-i18n="class_warrior">전사 (WARRIOR)</option>
+                    <option value="PALADIN" data-i18n="class_paladin">성기사 (PALADIN)</option>
+                    <option value="DK" data-i18n="class_dk">죽음의 기사 (DEATH KNIGHT)</option>
+                    <option value="MONK" data-i18n="class_monk">수도사 (MONK)</option>
+                    <option value="DH" data-i18n="class_dh">악마사냥꾼 (DEMON HUNTER)</option>
+                    <option value="DRUID" data-i18n="class_druid">드루이드 (DRUID)</option>
+                    <option value="ROGUE" data-i18n="class_rogue">도적 (ROGUE)</option>
+                    <option value="HUNTER" data-i18n="class_hunter">사냥꾼 (HUNTER)</option>
+                    <option value="MAGE" data-i18n="class_mage">마법사 (MAGE)</option>
+                    <option value="WARLOCK" data-i18n="class_warlock">흑마법사 (WARLOCK)</option>
+                    <option value="PRIEST" data-i18n="class_priest">사제 (PRIEST)</option>
+                    <option value="SHAMAN" data-i18n="class_shaman">주술사 (SHAMAN)</option>
+                    <option value="EVOKER" data-i18n="class_evoker">기원사 (EVOKER)</option>
+                </select>
+                <select id="specSelect" disabled></select>
+            </div>
+            <div class="text-input-row">
+                <input type="text" id="displayName" data-i18n="placeholder_display_name" data-i18n-placeholder="placeholder_display_name" placeholder="Display Name (ex: 불숨)"/>
+                <input type="text" id="spellId" data-i18n="placeholder_spell_id" data-i18n-placeholder="placeholder_spell_id" placeholder="Spell ID (ex: 357208)"/>
+                <input type="text" id="englishName" data-i18n="placeholder_english_name" data-i18n-placeholder="placeholder_english_name" placeholder="영어명 (ex: fire breath)"/>
+                <input type="text" id="koreanName" data-i18n="placeholder_optional_name" data-i18n-placeholder="placeholder_optional_name" placeholder="한글명 [옵션] (ex: 불의 숨결)"/>
+
+                <button id="addSkill" data-i18n="btn_add">추가</button>
+                <button id="cancelEdit" class="cancel-edit" style="display: none;" data-i18n="btn_cancel_edit">수정 취소</button>
+            </div>
         </div>
         <div style="margin-bottom: 10px;">
             <label for="exportClassSelect" data-i18n="label_export_class">📌 추출할 직업 선택: </label>
@@ -60,12 +66,34 @@
             </select>
             <button id="showExport" data-i18n="btn_export_list">📤 목록 추출</button>
             <button id="showImport" data-i18n="btn_import_list">📥 목록 입력</button>
+            <button data-reset id="resetList" data-i18n="resetButton">🚫 스킬 목록 초기화</button>
         </div>
 
         <div id="skillJsonContainer" style="display: none;">
             <textarea id="skillTextArea" rows="8" style="width: 100%;" placeholder=""></textarea>
             <div style="margin-top: 10px;">
                 <button id="executeSkillJsonAction" data-i18n="btn_execute">실행</button>
+                <button id="HideSkillTextAreaContainer" data-i18n="btn_hide">숨기기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 활성 스킬 현황 섹션 -->
+    <div class="class-section">
+        <div class="class-header" data-class="STATUS">
+            <div>
+                <span class="class-title" data-i18n="section_current_active_skills">📊 추출 스킬 현황</span>
+                <span class="skill-count" id="totalActiveCount">0개</span>
+            </div>
+            <span class="class-toggle">▶</span>
+        </div>
+
+        <div class="skills-container collapsed" data-skills="STATUS">
+            <div class="status-summary">
+                <div id="totalActiveDisplay" data-i18n="all_active_skills">전체 추출 대상 스킬: </div>
+            </div>
+            <div class="status-content" id="activeSkillsStatus">
+                <div class="no-active-skills" data-i18n="status_no_skills_active">⚠️ 활성화 된 추출 스킬이 없습니다.</div>
             </div>
         </div>
     </div>

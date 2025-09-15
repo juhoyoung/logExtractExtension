@@ -2,7 +2,8 @@ import { StorageManager } from '/js/storageManager.js';
 import { SkillRenderer } from '/js/skillRenderer.js';
 import { CollapseManager } from '/js/collapseManager.js';
 import { ImportExportManager } from '/js/importExportManager.js';
-import { defaultSkills } from '/init/defaultSkills.js';
+import { defaultSkills } from '/init/defaultSkills.js'
+import { classInfo } from '/init/classInfo.js';
 
 document.addEventListener('DOMContentLoaded', function () {
     // DOM 요소들
@@ -14,11 +15,16 @@ document.addEventListener('DOMContentLoaded', function () {
     const skillTextArea = document.getElementById('skillTextArea');
     const showExportBtn = document.getElementById('showExport');
     const showImportBtn = document.getElementById('showImport');
+    const resetListBtn = document.getElementById('resetList');
     const executeBtn = document.getElementById('executeSkillJsonAction');
+    const hideBtn = document.getElementById('HideSkillTextAreaContainer');
     const skillJsonContainer = document.getElementById('skillJsonContainer');
     const displayCheckbox = document.getElementById('optionAppendDisplay');
     const translateCheckbox = document.getElementById('optionTranslate');
     const exportClassSelect = document.getElementById('exportClassSelect');
+
+    const classSelect = document.getElementById('classSelect');
+    const specSelect = document.getElementById('specSelect');
 
     // 매니저 인스턴스 생성
     const skillRenderer = new SkillRenderer(skillsByClassElement);
@@ -29,15 +35,106 @@ document.addEventListener('DOMContentLoaded', function () {
     let isEditing = false;
     let editingSkillId = null;
 
+    // 활성 스킬 현황을 업데이트하는 함수
+    function updateActiveSkillsStatus(skills) {
+        const statusContent = document.getElementById('activeSkillsStatus');
+        const totalActiveCount = document.getElementById('totalActiveCount');
+        const totalActiveDisplay = document.getElementById('totalActiveDisplay');
+
+        // 활성화된 스킬만 필터링하고 클래스별, 특성별로 그룹화
+        const activeSkills = Object.entries(skills).filter(([id, skill]) => skill.enabled);
+        const groupedSkills = {};
+
+        activeSkills.forEach(([id, skill]) => {
+            const className = skill.class || 'UNKNOWN';
+            const specName = skill.spec || 'General';
+
+            if (!groupedSkills[className]) {
+                groupedSkills[className] = {};
+            }
+            if (!groupedSkills[className][specName]) {
+                groupedSkills[className][specName] = 0;
+            }
+            groupedSkills[className][specName]++;
+        });
+
+        const totalCount = activeSkills.length;
+
+        if (totalActiveCount) {
+            totalActiveCount.textContent = `${t('skill_count',[totalCount])}`;
+        }
+        if (totalActiveDisplay) {
+            totalActiveDisplay.innerHTML = `${t('all_active_skills')}: <strong>${t('skill_count',[totalCount])}</strong>`;
+        }
+
+        if (!statusContent) return;
+
+        if (totalCount === 0) {
+            statusContent.innerHTML = `<div class="no-active-skills">${t('status_no_skills_active')}</div>`;
+            return;
+        }
+
+        // 결과 HTML 생성
+        let html = '';
+        Object.entries(groupedSkills).forEach(([className, specs]) => {
+            const displayClassName = `${classInfo[className].korean} (${classInfo[className].english})` || className;
+            html += `<div class="status-item">`;
+            html += `<span class="status-class">${displayClassName}</span>`;
+
+            Object.entries(specs).forEach(([specName, count]) => {
+                html += `<span class="status-spec">${specName}</span>`;
+                html += `<span class="status-count">${t('skill_count',[totalCount])}</span>`;
+            });
+
+            html += `</div>`;
+        });
+
+        statusContent.innerHTML = html;
+    }
+
     // 기본 스킬 초기화
-    async function initializeDefaultSkills(skills) {
-        if (Object.keys(skills).length === 0) {
+    async function initializeDefaultSkills() {
+
+        const isFirstInstall = !(await StorageManager.keyExists('extractedSkills'));
+
+        if (isFirstInstall) {
             await StorageManager.saveSkills(defaultSkills);
             await loadSkills();
-            return true;
+            return true; // UI 재호출 필요
         }
-        return false;
+
+        return false; // 스킬 비움과 상관없이 더 이상 덮어쓰기 안 함
     }
+
+    // 클래스 선택 시 특성 옵션 채우기
+    classSelect.addEventListener('change', () => {
+        const selectedClass = classSelect.value;
+
+        specSelect.innerHTML = '';
+        if (classInfo[selectedClass]?.specs) {
+            for (const spec of classInfo[selectedClass].specs) {
+                const opt = document.createElement('option');
+
+                let displayName;
+                if (spec) {
+                    if (i18n.detectBrowserLanguage() === 'ko') {
+                        displayName = `${spec.ko} (${spec.en})`;
+                    } else {
+                        displayName = spec.en;
+                    }
+                } else {
+                    displayName = "General";
+                }
+
+
+                opt.value = spec.en;
+                opt.textContent = displayName;
+                specSelect.appendChild(opt);
+                specSelect.value = "General";
+                specSelect.disabled = false;
+            }
+        }
+    });
 
     // 수정 모드 진입
     async function enterEditMode(skillId) {
@@ -48,20 +145,19 @@ document.addEventListener('DOMContentLoaded', function () {
         isEditing = true;
         editingSkillId = skillId;
 
-        // 폼에 기존 데이터 채우기
-        document.getElementById('classSelect').value = skill.class || '';
+        classSelect.value = skill.class || '';
+        classSelect.dispatchEvent(new Event('change')); // 특성 채우기
+        specSelect.value = skill.spec || 'General';
         document.getElementById('displayName').value = skill.display || '';
         document.getElementById('spellId').value = skillId;
         document.getElementById('englishName').value = skill.en || '';
         document.getElementById('koreanName').value = skill.ko || '';
 
-        // UI 업데이트
         addSkillBtn.textContent = t('btn_edit_complete');
         cancelEditBtn.style.display = 'inline-block';
         editingIndicator.style.display = 'block';
         editingSkillName.textContent = skill.display;
 
-        // Spell ID 필드 비활성화
         document.getElementById('spellId').disabled = true;
 
         await loadSkills();
@@ -72,19 +168,17 @@ document.addEventListener('DOMContentLoaded', function () {
         isEditing = false;
         editingSkillId = null;
 
-        // 폼 초기화
-        document.getElementById('classSelect').value = '';
+        classSelect.value = '';
+        specSelect.innerHTML = '';
         document.getElementById('displayName').value = '';
         document.getElementById('spellId').value = '';
         document.getElementById('englishName').value = '';
         document.getElementById('koreanName').value = '';
 
-        // UI 복원
         addSkillBtn.textContent = t('btn_add');
         cancelEditBtn.style.display = 'none';
         editingIndicator.style.display = 'none';
 
-        // Spell ID 필드 활성화
         document.getElementById('spellId').disabled = false;
 
         loadSkills();
@@ -96,6 +190,9 @@ document.addEventListener('DOMContentLoaded', function () {
         if (await initializeDefaultSkills(skills)) return;
 
         skillRenderer.renderSkills(skills, isEditing ? editingSkillId : null);
+
+        // 활성 스킬 현황 업데이트
+        updateActiveSkillsStatus(skills);
 
         // 접기/펼치기 상태 복원
         await collapseManager.initialize();
@@ -131,6 +228,13 @@ document.addEventListener('DOMContentLoaded', function () {
         if (e.target.type === 'checkbox' && e.target.dataset.id) {
             const id = e.target.dataset.id;
             await StorageManager.updateSkillEnabled(id, e.target.checked);
+
+            // 활성 스킬 현황 업데이트
+            setTimeout(async () => {
+                const skills = await StorageManager.getSkills();
+                updateActiveSkillsStatus(skills);
+            }, 100);
+
             return;
         }
 
@@ -141,10 +245,9 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        // 전체 토글
-        const toggleAllClass = e.target.dataset.toggleAll;
-        if (toggleAllClass) {
-            const container = document.querySelector(`[data-skills="${toggleAllClass}"]`);
+        const toggleAllSpec = e.target.dataset.toggleAll;
+        if (toggleAllSpec) {
+            const container = document.querySelector(`[data-spec-skills="${toggleAllSpec}"]`);
             if (!container) return;
 
             const checkboxes = container.querySelectorAll('.enabled-toggle');
@@ -156,65 +259,57 @@ document.addEventListener('DOMContentLoaded', function () {
 
             checkboxes.forEach(cb => {
                 cb.checked = newState;
+
                 const id = cb.dataset.id;
                 if (skills[id]) {
-                    promises.push(StorageManager.updateSkillEnabled(id, newState));
+                    skills[id].enabled = newState;
                 }
             });
 
+            await StorageManager.saveSkills(skills);
             await Promise.all(promises);
+
+            // 활성 스킬 현황 업데이트
+            updateActiveSkillsStatus(skills);
         }
     });
 
     // 추가/수정 버튼 이벤트
     addSkillBtn.addEventListener('click', async () => {
-        const classCode = document.getElementById('classSelect').value.trim();
+        const classCode = classSelect.value.trim();
+        const spec = specSelect.value.trim() || 'General';
         const id = document.getElementById('spellId').value.trim();
         let displayName = document.getElementById('displayName').value.trim();
         const en = document.getElementById('englishName').value.trim();
         const ko = document.getElementById('koreanName').value.trim();
 
-        // 필수 필드 검증
-        if (!classCode) {
-            alert(t('alert_select_class'));
-            return;
-        }
+        if (!classCode) { alert(t('alert_select_class')); return; }
+        if (!id) { alert(t('alert_spell_id_required')); return; }
+        if (!/^\d+$/.test(id)) { alert(t('alert_spell_id_numeric')); return; }
+        if (!en) { alert(t('alert_name_required')); return; }
 
-        if (!id) {
-            alert(t('alert_spell_id_required'));
-            return;
-        }
+        if (!displayName) displayName = en || ko;
 
-        if (!/^\d+$/.test(id)) {
-            alert(t('alert_spell_id_numeric'));
-            return;
-        }
+        const skills = await StorageManager.getSkills();
 
-        if (!en && !ko) {
-            alert(t('alert_name_required'));
-            return;
-        }
+        // 기본값은 신규 추가용
+        let enabled = true;
+        let extractBySpellId = false;
 
-        // Display Name 자동 생성
-        if (!displayName) {
-            displayName = en || ko;
-        }
-
-        // 중복 확인 (수정 모드가 아닐 때만)
-        if (!isEditing) {
-            const skills = await StorageManager.getSkills();
-            if (skills[id] && !confirm(t('confirm_duplicate_id'))) {
-                return;
-            }
+        // 수정 모드일 경우 기존 값 유지
+        if (isEditing && skills[id]) {
+            enabled = skills[id].enabled ?? true;
+            extractBySpellId = skills[id].extractBySpellId ?? false;
         }
 
         const skillData = {
             display: displayName,
             en: en || '',
             ko: ko || '',
-            enabled: true,
+            enabled,
             class: classCode,
-            extractBySpellId: false
+            spec: spec || 'General',
+            extractBySpellId
         };
 
         await StorageManager.addSkill(id, skillData);
@@ -222,8 +317,8 @@ document.addEventListener('DOMContentLoaded', function () {
         if (isEditing) {
             exitEditMode();
         } else {
-            // 입력 필드 초기화 (추가 모드일 때만)
-            document.getElementById('classSelect').value = '';
+            classSelect.value = '';
+            specSelect.innerHTML = '';
             document.getElementById('displayName').value = '';
             document.getElementById('spellId').value = '';
             document.getElementById('englishName').value = '';
@@ -246,12 +341,30 @@ document.addEventListener('DOMContentLoaded', function () {
         importExportManager.openSkillJsonArea('import');
     });
 
+    resetListBtn.addEventListener('click', async () => {
+        const confirmReset = confirm(t('confirmResetSkills'));
+
+        if (!confirmReset) return;
+
+        const success = await StorageManager.resetSkills();
+
+        if (success) {
+            await loadSkills();
+            alert(t('resetSkillsCompleted'));
+        }
+    });
+
+
+
     executeBtn.addEventListener('click', async () => {
         const success = await importExportManager.executeAction();
         if (success) {
             exitEditMode();
             await loadSkills();
         }
+    });
+    hideBtn.addEventListener('click', async () => {
+        importExportManager.hideSkillContainer();
     });
 
     // 추출 옵션 초기화 및 이벤트

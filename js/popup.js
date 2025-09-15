@@ -4,7 +4,7 @@ function waitForPageLoad(tabId, callback) {
 
     const interval = setInterval(() => {
         chrome.scripting.executeScript({
-            target: { tabId: tabId },
+            target: {tabId: tabId},
             func: () => document.readyState === 'complete'
         }, (results) => {
             if (chrome.runtime.lastError) {
@@ -25,26 +25,26 @@ function waitForPageLoad(tabId, callback) {
 }
 
 // 저장된 스킬 목록
-let trackedSkills = [];
+let extractedSkills = [];
 
 document.addEventListener('DOMContentLoaded', function () {
     // i18n 초기화 완료 후 실행
     const initializeAfterI18n = () => {
         const settingsBtn = document.getElementById('settingsBtn');
-        const trackBtn = document.getElementById('trackBtn');
+        const extractBtn = document.getElementById('extractBtn');
         const clearBtn = document.getElementById('clearBtn');
         const copyBtn = document.getElementById('copyBtn');
         const status = document.getElementById('status');
         const results = document.getElementById('results');
         const resultsList = document.getElementById('resultsList');
         const playerNameInput = document.getElementById('playerName');
-        const rawTrackBtn = document.getElementById('rawTrackBtn');
+        const rawExtractBtn = document.getElementById('rawExtractBtn');
 
         let currentResults = [];
 
-        chrome.storage.local.get(['trackedSkills'], function (data) {
-            const rawSkills = data.trackedSkills || {};
-            trackedSkills = Object.entries(rawSkills)
+        chrome.storage.local.get(['extractedSkills'], function (data) {
+            const rawSkills = data.extractedSkills || {};
+            extractedSkills = Object.entries(rawSkills)
                 .filter(([_, value]) => value.enabled)
                 .map(([id, value]) => ({
                     id,
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function () {
             chrome.storage.local.set({playerName: playerName});
         });
 
-        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
             const currentTab = tabs[0];
             try {
                 const url = new URL(currentTab.url);
@@ -87,13 +87,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (!isReportPath) {
                     status.textContent = t('status_invalid_path');
                     status.style.background = 'rgba(220, 53, 69, 0.3)';
-                    toggleTrackBtn(false)
+                    toggleExtractBtn(false)
                     return;
                 }
                 if (!hasFight) {
                     status.textContent = t('status_no_fight');
                     status.style.background = 'rgba(220, 53, 69, 0.3)';
-                    toggleTrackBtn(false)
+                    toggleExtractBtn(false)
                     return;
                 }
 
@@ -124,9 +124,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
 
                     let currentSkillNames = new Set();
-                    let trackedSkillNames = new Set();
+                    let extractedSkillNames = new Set();
                     let currentSkillIds = new Set();
-                    let trackedSkillIds = new Set();
+                    let extractedSkillIds = new Set();
                     let hasTypeCast = false;
                     let hasSourcePlayer = false;
 
@@ -165,39 +165,40 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
                     }
 
-                    trackedSkills.forEach(m => {
-                        console.log(trackedSkills)
+                    extractedSkills.forEach(m => {
                         if (m.extractBySpellId) {
-                            trackedSkillIds.add(String(m.id));
-                        }else {
-                            trackedSkillNames.add(m.en);
-                            if(!translatePage)
-                                trackedSkillNames.add(m.ko);
+                            extractedSkillIds.add(String(m.id));
+                        } else {
+                            if (isValidString(m.en)) {
+                                extractedSkillNames.add(m.en);
+                            }
+                            if (!translatePage && isValidString(m.ko))
+                                extractedSkillNames.add(m.ko);
                         }
                     })
 
-                    const trackedNamesArr = Array.from(trackedSkillNames);
+                    const extractedNamesArr = Array.from(extractedSkillNames);
                     const currentNamesArr = Array.from(currentSkillNames);
-                    const trackedIdsArr   = Array.from(trackedSkillIds);
-                    const currentIdsArr   = Array.from(currentSkillIds);
+                    const extractedIdsArr = Array.from(extractedSkillIds);
+                    const currentIdsArr = Array.from(currentSkillIds);
 
-                    const namesEqual = trackedNamesArr.length === currentNamesArr.length &&
-                        trackedNamesArr.every(name => currentNamesArr.includes(name));
-                    const idsEqual   = trackedIdsArr.length === currentIdsArr.length &&
-                        trackedIdsArr.every(id => currentIdsArr.includes(id));
+                    const namesEqual = extractedNamesArr.length === currentNamesArr.length &&
+                        extractedNamesArr.every(name => currentNamesArr.includes(name));
+                    const idsEqual = extractedIdsArr.length === currentIdsArr.length &&
+                        extractedIdsArr.every(id => currentIdsArr.includes(id));
                     const isSame = namesEqual && idsEqual & hasTypeCast && hasSourcePlayer;
 
                     if (!isSame) {
                         // 새로운 pins 파라미터 생성
                         const parts = [];
-                        if (trackedSkillNames.size > 0) {
-                            const nameClause = [...trackedSkillNames]
+                        if (extractedSkillNames.size > 0) {
+                            const nameClause = [...extractedSkillNames]
                                 .map(name => `"${name.replace(/"/g, '\\"')}"`)
                                 .join(', ');
                             parts.push(`ability.name IN (${nameClause})`);
                         }
-                        if (trackedSkillIds.size > 0) {
-                            const idClause = [...trackedSkillIds].join(', ');
+                        if (extractedSkillIds.size > 0) {
+                            const idClause = [...extractedSkillIds].join(', ');
                             parts.push(`ability.id IN (${idClause})`);
                         }
                         let expr = parts.join(' OR ');
@@ -216,52 +217,54 @@ document.addEventListener('DOMContentLoaded', function () {
                         const newUrl = `${url.origin}${url.pathname}?${params.toString()}`;
                         status.textContent = t('status_adding_params');
                         status.style.background = 'rgba(255, 193, 7, 0.3)';
-                        toggleTrackBtn(false);
+                        toggleExtractBtn(false);
 
-                        chrome.tabs.update(currentTab.id, { url: newUrl }, function (updatedTab) {
+                        chrome.tabs.update(currentTab.id, {url: newUrl}, function (updatedTab) {
                             status.textContent = t('status_redirecting');
                             status.style.background = 'rgba(255, 193, 7, 0.3)';
-                            toggleTrackBtn(false);
+                            toggleExtractBtn(false);
 
                             waitForPageLoad(updatedTab.id, (loaded) => {
                                 if (loaded) {
                                     status.textContent = t('status_page_loaded');
                                     status.style.background = 'rgba(40, 167, 69, 0.3)';
-                                    toggleTrackBtn(true);
+                                    toggleExtractBtn(true);
                                 } else {
                                     status.textContent = t('status_page_load_failed');
                                     status.style.background = 'rgba(220, 53, 69, 0.3)';
-                                    toggleTrackBtn(false);
+                                    toggleExtractBtn(false);
                                 }
                             });
                         });
                     } else {
                         status.textContent = t('status_ready');
                         status.style.background = 'rgba(40, 167, 69, 0.3)';
-                        toggleTrackBtn(true);
+                        toggleExtractBtn(true);
                     }
                 });
             } catch (e) {
                 status.textContent = t('status_url_error');
                 status.style.background = 'rgba(220, 53, 69, 0.3)';
-                toggleTrackBtn(false);
+                toggleExtractBtn(false);
             }
         });
 
-        function runExtraction({ useOriginalName }) {
+        function isValidString(str) {
+            return typeof str === 'string' && str.trim() !== '';
+        }
+
+        function runExtraction({useOriginalName}) {
             return new Promise((resolve, reject) => {
                 chrome.storage.local.get(['exportOptions'], function (data) {
                     const opts = data.exportOptions || {};
-                    const trackingOpts = {
-                        options: {
-                            appendDisplay: opts.appendDisplay || false
-                        }
+                    const extractingOpts = {
+                        options: {appendDisplay: opts.appendDisplay || false}
                     };
 
                     chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
                         chrome.scripting.executeScript({
                             target: {tabId: tabs[0].id},
-                            func: async function (trackedSkills, trackingOpts, useOriginalName, playerName) {
+                            func: async function (extractedSkills, extractingOpts, useOriginalName, playerName) {
                                 function toMinuteSeconds(rawTime) {
                                     const parts = rawTime.split(':');
                                     const minutes = String(parseInt(parts[0])).padStart(2, '0');
@@ -269,8 +272,29 @@ document.addEventListener('DOMContentLoaded', function () {
                                     return minutes + ':' + String(seconds).padStart(2, '0');
                                 }
 
+                                // 시간을 초로 변환하는 함수 추가
+                                function timeToSeconds(timeStr) {
+                                    const [minutes, seconds] = timeStr.split(':').map(Number);
+                                    return minutes * 60 + seconds;
+                                }
+
+                                // 중복 체크 함수
+                                function isDuplicate(entries, newEntry, skillId) {
+                                    const newTime = timeToSeconds(newEntry.match(/time:(\d+:\d+)/)[1]);
+
+                                    return entries.some(entry => {
+                                        if (!entry.includes(`{spell:${skillId}}`)) return false;
+
+                                        const entryTime = timeToSeconds(entry.match(/time:(\d+:\d+)/)[1]);
+                                        const timeDiff = Math.abs(newTime - entryTime);
+
+                                        return timeDiff < 0.1; // 0.1초 미만 차이면 중복으로 간주
+                                    });
+                                }
+
                                 const entries = [];
                                 await new Promise(resolve => setTimeout(resolve, 2000));
+
                                 let rows = document.querySelectorAll('tr[id^="event-row"]');
                                 if (rows.length === 0) rows = document.querySelectorAll('tr[class*="event"]');
                                 if (rows.length === 0) rows = document.querySelectorAll('table tr');
@@ -280,13 +304,14 @@ document.addEventListener('DOMContentLoaded', function () {
                                     const row = rows[i];
                                     const timeCell = row.querySelector('.main-table-number');
                                     const eventCell = row.querySelector('.event-description-cell');
+
                                     if (!timeCell || !eventCell) continue;
 
                                     const rawTime = timeCell.textContent.trim();
                                     const time = toMinuteSeconds(rawTime);
                                     const cleanText = eventCell.textContent.replace(/\s+/g, '').toLowerCase();
 
-                                    for (const skill of trackedSkills) {
+                                    for (const skill of extractedSkills) {
                                         let Skill_En = skill.en.replace(/\s+/g, '').toLowerCase().trim();
                                         let Skill_Ko = skill.ko.replace(/\s+/g, '').trim();
 
@@ -295,25 +320,21 @@ document.addEventListener('DOMContentLoaded', function () {
                                             cleanText.includes('casts' + Skill_Ko)
                                         ) {
                                             let result;
-
-                                            let targetName = useOriginalName
-                                                ? cleanText.split("casts")[0]
-                                                : playerName;
-
+                                            let targetName = useOriginalName ? cleanText.split("casts")[0] : playerName;
                                             result = `{time:${time}} - ${targetName} {spell:${skill.id}}`;
+                                            result = extractingOpts.options.appendDisplay ? result.concat(` - ${skill.display}`) : result;
 
-                                            result = trackingOpts.options.appendDisplay
-                                                ? result.concat(` - ${skill.display}`)
-                                                : result;
-
-                                            entries.push(result);
+                                            // 중복 체크 후 추가
+                                            if (!isDuplicate(entries, result, skill.id)) {
+                                                entries.push(result);
+                                            }
                                             break;
                                         }
                                     }
                                 }
                                 return entries;
                             },
-                            args: [trackedSkills, trackingOpts, useOriginalName, document.getElementById('playerName')?.value || '']
+                            args: [extractedSkills, extractingOpts, useOriginalName, document.getElementById('playerName')?.value || '']
                         }).then(res => {
                             resolve(res && res[0] ? res[0].result : []);
                         }).catch(reject);
@@ -322,16 +343,16 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
-        trackBtn.addEventListener('click', function () {
-            toggleTrackBtn(false);
-            trackBtn.textContent = t('btn_analyzing');
+        extractBtn.addEventListener('click', function () {
+            toggleExtractBtn(false);
+            extractBtn.textContent = t('btn_analyzing');
             status.textContent = t('status_analyzing');
             status.className = 'status loading';
 
-            runExtraction({ useOriginalName: false })
+            runExtraction({useOriginalName: false})
                 .then(skillEvents => {
-                    toggleTrackBtn(true);
-                    trackBtn.textContent = t('btn_extract_skills');
+                    toggleExtractBtn(true);
+                    extractBtn.textContent = t('btn_extract_skills');
                     currentResults = skillEvents;
                     if (!skillEvents || skillEvents.length === 0) {
                         status.textContent = t('status_no_skills_found');
@@ -342,22 +363,22 @@ document.addEventListener('DOMContentLoaded', function () {
                 })
                 .catch(err => {
                     console.error(err);
-                    toggleTrackBtn(true);
-                    trackBtn.textContent = t('btn_extract_skills');
+                    toggleExtractBtn(true);
+                    extractBtn.textContent = t('btn_extract_skills');
                     status.textContent = t('status_error');
                 });
         });
 
-        rawTrackBtn.addEventListener('click', function () {
-            toggleTrackBtn(false);
-            rawTrackBtn.textContent = t('btn_analyzing');
+        rawExtractBtn.addEventListener('click', function () {
+            toggleExtractBtn(false);
+            rawExtractBtn.textContent = t('btn_analyzing');
             status.textContent = t('status_analyzing_raw');
             status.className = 'status loading';
 
-            runExtraction({ useOriginalName: true })
+            runExtraction({useOriginalName: true})
                 .then(skillEvents => {
-                    toggleTrackBtn(true);
-                    rawTrackBtn.textContent = t('btn_extract_raw');
+                    toggleExtractBtn(true);
+                    rawExtractBtn.textContent = t('btn_extract_raw');
                     currentResults = skillEvents;
                     if (!skillEvents || skillEvents.length === 0) {
                         status.textContent = t('status_no_raw_skills_found');
@@ -368,8 +389,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 })
                 .catch(err => {
                     console.error(err);
-                    toggleTrackBtn(true);
-                    rawTrackBtn.textContent = t('btn_extract_raw');
+                    toggleExtractBtn(true);
+                    rawExtractBtn.textContent = t('btn_extract_raw');
                     status.textContent = t('status_error');
                 });
         });
@@ -419,13 +440,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // 1 == on // 2 == off
-        function toggleTrackBtn(toggle) {
-            if(toggle == true) {
-                rawTrackBtn.disabled = false;
-                trackBtn.disabled = false;
-            }else{
-                rawTrackBtn.disabled = true;
-                trackBtn.disabled = true;
+        function toggleExtractBtn(toggle) {
+            if (toggle == true) {
+                rawExtractBtn.disabled = false;
+                extractBtn.disabled = false;
+            } else {
+                rawExtractBtn.disabled = true;
+                extractBtn.disabled = true;
             }
         }
     };
