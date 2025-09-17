@@ -907,6 +907,15 @@ export const defaultSkills = {
     "ko": "뼈폭풍",
     "spec": "Blood"
   },
+  "196718": {
+    "class": "DH",
+    "display": "어둠",
+    "en": "Darkness",
+    "enabled": false,
+    "extractBySpellId": false,
+    "ko": "어둠",
+    "spec": "General"
+  },
   "196937": {
     "class": "ROGUE",
     "display": "유령의 일격",

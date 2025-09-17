@@ -77,13 +77,20 @@ document.addEventListener('DOMContentLoaded', function () {
         // 결과 HTML 생성
         let html = '';
         Object.entries(groupedSkills).forEach(([className, specs]) => {
-            const displayClassName = `${classInfo[className].korean} (${classInfo[className].english})` || className;
+            let displayClassName; // = `${classInfo[className].korean} (${classInfo[className].english})` || className;
+
+            if (i18n.detectBrowserLanguage() === 'ko') {
+                displayClassName = `${classInfo[className].korean} (${classInfo[className].english})`;
+            } else {
+                displayClassName = classInfo[className].english;
+            }
+
             html += `<div class="status-item">`;
             html += `<span class="status-class">${displayClassName}</span>`;
 
             Object.entries(specs).forEach(([specName, count]) => {
                 html += `<span class="status-spec">${specName}</span>`;
-                html += `<span class="status-count">${t('skill_count',[totalCount])}</span>`;
+                html += `<span class="status-count">${t('skill_count',[count])}</span>`;
             });
 
             html += `</div>`;
