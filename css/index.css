@@ -385,6 +385,21 @@ button[data-edit] {
     text-align: center;
     font-weight: bold;
     color: #495057;
+    display: flex;
+    align-items: center;
+    justify-content: center;  /* 기본은 가운데 정렬 */
+    position: relative;       /* 버튼을 왼쪽 고정하기 위해 필요 */
+}
+
+
+.status-summary #toggleAllSkills {
+    position: absolute;
+    left: 0;
+}
+
+.status-summary #totalActiveDisplay {
+    text-align: center;
+    flex: 1; /* 남은 공간 차지해서 중앙 배치 */
 }
 
 .status-content {

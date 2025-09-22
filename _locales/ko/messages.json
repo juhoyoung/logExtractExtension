@@ -370,5 +370,9 @@
   },
   "resetButton": {
     "message": "🚫 스킬 목록 전체 삭제 🚫"
+  },
+  "all_toggle_skills": {
+    "message": "✅ 전체 토글"
   }
+
 }

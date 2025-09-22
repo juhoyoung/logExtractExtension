@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "default_locale": "en",
   "name": "Warcraft Logs Skill Extractor",
-  "version": "1.0",
+  "version": "1.2",
   "description": "Extract and Manage your Warcraft Logs skills directly from your browser.",
   "permissions": [
     "activeTab",

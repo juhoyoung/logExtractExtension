@@ -370,6 +370,9 @@
   },
   "resetButton": {
     "message": "🚫 Delete ALL Skill List 🚫"
+  },
+  "all_toggle_skills": {
+    "message": "✅ Toggle All"
   }
 
 }

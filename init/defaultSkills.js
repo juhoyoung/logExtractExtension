@@ -871,6 +871,15 @@ export const defaultSkills = {
     "ko": "폭풍수호자",
     "spec": "Elemental"
   },
+  "192222": {
+    "class": "SHAMAN",
+    "display": "마그마 토템",
+    "en": "Liquid Magma Totem",
+    "enabled": false,
+    "extractBySpellId": false,
+    "ko": "마그마 토템",
+    "spec": "Elemental"
+  },
   "192249": {
     "class": "SHAMAN",
     "display": "폭풍의 정령",

@@ -26,6 +26,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const classSelect = document.getElementById('classSelect');
     const specSelect = document.getElementById('specSelect');
 
+    const toggleAllBtn = document.getElementById('toggleAllSkills');
+
     // 매니저 인스턴스 생성
     const skillRenderer = new SkillRenderer(skillsByClassElement);
     const collapseManager = new CollapseManager();
@@ -34,6 +36,27 @@ document.addEventListener('DOMContentLoaded', function () {
     // 상태 관리
     let isEditing = false;
     let editingSkillId = null;
+
+
+    toggleAllBtn.addEventListener('click', async () => {
+        const skills = await StorageManager.getSkills();
+        const skillArray = Object.entries(skills);
+
+        if (skillArray.length === 0) return;
+
+        // 현재 전체가 켜져있는지 확인
+        const allChecked = skillArray.every(([id, skill]) => skill.enabled);
+
+        // 반대로 토글할 상태
+        const newState = !allChecked;
+
+        skillArray.forEach(([id, skill]) => {
+            skill.enabled = newState;
+        });
+
+        await StorageManager.saveSkills(skills);
+        await loadSkills(); // UI 갱신
+    });
 
     // 활성 스킬 현황을 업데이트하는 함수
     function updateActiveSkillsStatus(skills) {
@@ -365,10 +388,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     executeBtn.addEventListener('click', async () => {
         const success = await importExportManager.executeAction();
-        if (success) {
-            exitEditMode();
-            await loadSkills();
-        }
+        await exitEditMode();
+        //await loadSkills();
     });
     hideBtn.addEventListener('click', async () => {
         importExportManager.hideSkillContainer();
